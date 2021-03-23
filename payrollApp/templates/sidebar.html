@@ -1,0 +1,82 @@
+
+
+
+  <script>
+    // $(document).ready(function(){
+    //   var now = new Date();
+    //   setInterval(function(){
+    //     $.ajax({
+    //       url: '/api/restaurant/order/notification/' + now.toISOString() + '/',
+    //       method: 'GET',
+    //       success: function(data){
+    //         if (data['notification'] == 0){
+    //           $('.badge').text('');
+    //         }else{
+    //           $('.badge').text(data['notification']);
+    //         }
+    //       }
+    //     })
+    //   }, 3000)
+
+    // })
+  </script>
+
+
+  <div>
+    <nav class="navbar navbar-dark navbar-expand-sm">
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    </nav>
+    <div class="collapse" id="navbarToggleExternalContent">
+      <div class="navbar-nav">
+        <div class="text-center text-white sidebarHeader">
+          <img src="{{ MEDIA_URL }}{{ request.user.restaurant.logo }}" width="78" height="78" alt="" class="rounded-circle">
+          <br>
+          <br>
+          <h4>Hi, {% comment %} {{ request.user.get_full_name }} {% endcomment %}</h4>
+          <h5 id="restName">{% comment %} {{ request.user.restaurant.name }} {% endcomment %}</h5>
+        </div>
+    
+        <div class="list-group">
+          <span class="text-uppercase">Dashboard</span>
+
+          <a href="{% url 'employee' %}" class="list-group-item {% if request.path == restaurant_meal_url %} active {% endif %}">Employees</a>
+          <a href="{% url 'order' %}"
+            class="list-group-item {% if request.path == restaurant_order_url %} active {% endif %}">Orders
+            <span class="badge"></span>
+          </a>
+          <a href="{% url 'process' %}" class="list-group-item {% if request.path == restaurant_meal_url %} active {% endif %}">Processes</a>
+          <a href="{% url 'position' %}" class="list-group-item {% if request.path == restaurant_meal_url %} active {% endif %}">Position</a>
+          <a href="{% url 'employmentType' %}" class="list-group-item {% if request.path == restaurant_meal_url %} active {% endif %}">Employment Type</a>
+
+            
+          <a href="#" class="list-group-item {% if request.path == restaurant_report_url %} active {% endif %}">Reports</a>
+          
+    
+          <span class="text-uppercase">Profile</span>
+          <a href="#" class="list-group-item {% if request.path == restaurant_account_url %} active {% endif %}">Account</a>
+    
+        </div>
+    
+        <div class="text-center m-4">
+          <a href="#" class="btn btn-pink">Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  <!-- NAVBAR NOT DONE... -->
+  <!-- <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
+    aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button> -->
+
+  <!-- <div id="slide-out" class="side-nav sn-bg-4 fixed"></div> -->
+
+  <!-- <p class="navbar-brand d-sm-none text-white" href="#">{{ request.user.restaurant.name }}</p> -->
+
+  <!-- <div class="collapse navbar-collapse pt-lg-4 pt-md-4 pt-sm-4 pt-0" id="navbarsExampleDefault"> 
+    
+  </div>-->

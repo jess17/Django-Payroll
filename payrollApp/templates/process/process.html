@@ -1,0 +1,44 @@
+{% extends 'view_base.html' %}
+
+{% load static %}
+
+{% block viewTitle %}Process{% endblock %}
+
+{% block addBtn %}
+{% if orderFlag %}
+  <a href="{% url 'create-process' %}?next={{ request.path }}" class="btn btn-pink">Add Process</a>
+{% else %}
+  <a href="{% url 'create-order' %}" class="btn btn-pink">Add Order</a>
+{% endif %}
+
+{% endblock %}
+
+{% block columns %}
+  {% if flags %}
+    <th>ID</th>
+    <th>Order Code</th>
+    <th>Process Name</th>
+    <th>Piece rate</th>
+    <th>Quantity</th>
+    <th>Description</th>
+  {% endif %}
+{% endblock %}
+
+{% load customtags %}
+
+{% block tbodyContent %}
+  {% if not flags %}
+  <h3>No Process</h3>
+  {% else %}
+    {% for process in processes %}
+      <tr>
+        <td scope="row"><a href="{% url 'edit-process' process.id %}?next={{ request.path }}">{{ process.id }}</a></td>
+        <td><a href="{% url 'process-of-order' process.orderId|escape|getID %}">{{ process.orderId }}</a></td>
+        <td>{{ process.name }}</td>
+        <td>{{ process.price }}</td>
+        <td>{{ process.quantity }}</td>
+        <td>{{ process.description|slice:"0:15" }}{% if process.description|length > 15 %}...{% endif %}</td>
+      </tr>
+    {% endfor %}
+  {% endif %}    
+{% endblock %}

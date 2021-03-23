@@ -1,0 +1,73 @@
+{% extends 'view_base.html' %}
+
+{% block viewTitle %}Employee{% endblock %}
+{% block addBtn %}
+<a href="{% url 'create-position' %}?next={{ request.path }}" class="btn btn-pink">Add Position</a>
+<a href="{% url 'create-employmentType' %}?next={{ request.path }}" class="btn btn-pink">Add Employment Type</a>
+<a href="{% url 'create-employee' %}" class="btn btn-pink">Add Employee</a>
+
+{% endblock %}
+
+{% block columns %}
+  {% if flags %}
+    <th>ID</th>
+    <th>Name</th>
+    <th>Position</th>
+    <th>Employment Type</th>
+    <th>Date Hired</th>
+    <th>Notes</th>
+  {% endif %}
+{% endblock %}
+            
+{% block tbodyContent %}
+  {% if not flags %}
+  <h3>No Employee</h3>
+  {% else %}
+    {% for employee  in employees %}
+      <tr>
+        <td scope="row"><a href="{% url 'edit-employee' employee.id %}">{{ employee.id }}</a></td>
+        <td>{{ employee.firstName}} {% if employee.lastName %}{{ employee.lastName }}{% endif %}</td>
+        <!-- <td>{{ order.name }}</td> -->
+        <td>{{ employee.positionID }}</td>
+        <td>{{ employee.employmentTypeID }}</td>
+        <td>{{ employee.hireDate }}</td>
+        <td>{{ employee.notes|slice:"0:37" }}{% if employee.notes|length > 37 %}...{% endif %}</td>
+      </tr>
+    {% endfor %}
+  {% endif %}
+{% endblock %}
+        
+            <!-- <td>
+              {% if order.status == 1 %}
+                <form action="" method="POST">
+                  {% csrf_token %}
+                  <input name="id" value="{{ order.id }}" hidden>
+                  <button class="btn btn-success">Ready</button>
+
+                </form>
+              {% endif %}
+              {% if order.status == 2 %}
+                <form action="" method="POST">
+                  {% csrf_token %}
+                  <input name="id" value="{{ order.id }}" hidden>
+                  <button class="btn btn-success">On the way</button>
+
+                </form>
+              {% endif %}
+              {% if order.status == 3 %}
+                <form action="" method="POST">
+                  {% csrf_token %}
+                  <input name="id" value="{{ order.id }}" hidden>
+                  <button class="btn btn-success">Delivered</button>
+
+                </form>
+              {% endif %}
+              {% if order.status == 4 %}
+                <form action="" method="POST">
+                  {% csrf_token %}
+                  <input name="id" value="{{ order.id }}" hidden>
+                  <button class="btn btn-danger">Cooking</button>
+
+                </form>
+              {% endif %} -->
+ 

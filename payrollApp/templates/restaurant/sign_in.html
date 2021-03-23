@@ -1,0 +1,26 @@
+{% extends 'base_signup.html' %}
+{% load socialaccount %}
+{% providers_media_js %}
+{% load bootstrap4 %}
+
+{% block title %}Sign In {% endblock %}
+
+{% block heading %}Restaurant - Sign In {% endblock %}
+
+{% block content %}
+  <form method="POST">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+
+    <button type="submit" class="btn btn-pink">Sign In</button>
+  </form>
+  <a href="{% url 'restaurant-sign-up' %}">Become a restaurant</a>
+
+  <br>
+  <a href="{% provider_login_url 'facebook' method='oauth2' %}">Login Using Facebook Account</a>
+  <!-- <a href="{% provider_login_url 'facebook' method='js_sdk' %}">Login Using Facebook Account</a> -->
+  <br>
+  <a href="{% provider_login_url 'google' %}">Login Using Google Account</a>
+
+  <!-- {{user}} -->
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'view_base.html' %}
+
+{% load static %}
+
+{% block viewTitle %}Process of Order {{ order.code|capfirst }}{% endblock %}
+
+{% block addBtn %}
+  <a href="{% url 'create-process' order.id%}?next={{ request.path }}" class="btn btn-pink">Add Process</a>
+{% endblock %}
+
+
+{% block columns %}
+  {% if flags %}
+    <th>ID</th>
+    <th>Order Code</th>
+    <th>Process Name</th>
+    <th>Piece rate</th>
+    <th>Quantity</th>
+    <th>Description</th>
+  {% endif %}           
+{% endblock %}
+
+{% block tbodyContent %}
+  {% if not flags %}
+    <h3>No process</h3>
+    {% else %} 
+      {% for process in processes %}
+        <tr>
+          <td scope="row"><a href="{% url 'edit-process' process.id %}?next={{ request.path }}">{{ process.id }}</a></td>
+          <td>{{ process.orderId }}</td>
+          <td>{{ process.name }}</td>
+          <td>{{ process.price }}</td>
+          <td>{{ process.quantity }}</td>
+          <td>{{ process.description }}</td>
+          </td>
+        </tr>
+      {% endfor %} 
+  {% endif %}
+{% endblock %}
+
+

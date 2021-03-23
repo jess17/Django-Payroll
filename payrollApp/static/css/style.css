@@ -1,0 +1,150 @@
+body {
+  padding-top: 20px;
+  background-color: #EDF2F5;
+  overflow: auto;
+}
+
+.bg-blue {
+  background-color: #3F3F63;
+}
+
+.text-white {
+  color:white;
+}
+
+.btn-pink {
+  color: white;
+  background-color: #EE5462;
+}
+
+.btn-pink:hover,
+.btn-pink:focus {
+  color: white;
+  background-color: #DA4F5D;
+}
+
+/* SIDEBAR */
+.sidebar {
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding: 0;
+  background-color: #3F3F63;
+  overflow: auto;
+}
+
+/* SIDEBAR --HEADER*/
+.sidebarHeader { 
+  padding: 30px 10px;
+  font-weight: bold;
+  font-size: 15px;
+  background-color: #383957;
+}
+
+.sidebar > div:first-child > h4 {
+  color: #E0DEEB;
+}
+
+.sidebar > div:first-child > h5 {
+  color: #B6B4C1;
+}
+
+#restName {
+  color: #B6B4C1 !important;
+}
+
+/* SIDEBAR --LIST*/
+.sidebar .list-group {
+  padding: 0;
+  background-color: #3F3F63;
+}
+
+.sidebar .list-group > span {
+  color: #B6B4C1;
+  display: block;
+  margin-top: 20px;
+  padding: 10px 30px;
+  font-size: 16px;
+  font-weight: 300;
+}
+
+.sidebar .list-group .list-group-item,
+.sidebar .list-group .list-group-item:focus {
+  background-color: #3F3F63;
+  color: #B6B4C1;
+  border: 0;
+  padding-left: 60px;
+  padding-right: 30px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.sidebar .list-group .list-group-item.active,
+.sidebar .list-group .list-group-item:hover {
+  background-color: #3B3957;
+  color: #E0DEEB;
+}
+
+.sidebar .list-group .list-group-item:first-child {
+  border-top-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.sidebar .list-group .list-group-item .badge,
+.sidebar .list-group .list-group-item.active .badge {
+  background-color: #EE5462;
+  color: #E0DEEB;
+}
+
+/* .sidebar > div:last-child{
+  padding: 30px;
+} */
+
+.sidebar > div:last-child .btn{
+  width: 75%;
+} 
+
+/* CONTENT  */
+.content{
+  padding: 0 10px;
+}
+
+.content .card {
+  border: none;
+}
+
+.table > thead > tr > th,
+.table > thead > tr >td {
+  vertical-align: middle;
+  /* padding: 0.5rem !important; */
+}
+
+/* MEDIA  */
+/* @media only screen and (max-width: 450px) {
+  .content {
+      padding-top: 20px
+
+  }
+} */
+
+@media only screen and (max-width: 860px) {
+  .sidebar .list-group .list-group-item,
+  .sidebar .list-group .list-group-item:focus {
+    padding-left: 25px;
+  }
+
+  .sidebar .list-group > span {
+    padding: 10px 15px;
+  }
+}
+@media only screen and (min-width: 576px) {
+  .collapse:not(.show) {
+    display: block !important; 
+    }
+
+  
+}
+
+
+

@@ -1,0 +1,30 @@
+{% extends 'view_base.html' %}
+
+{% block viewTitle %}Employment Type{% endblock %}
+{% block addBtn %}
+  <a href="{% url 'create-employmentType' %}?next={{ request.path }}" class="btn btn-pink">Add Employment Type</a>
+{% endblock %}
+
+{% block columns %}
+  {% if flags %}
+    <th>ID</th>
+    <th>Employment Type</th>
+    <th>Description/th>
+  {% endif %}
+{% endblock %}
+            
+{% block tbodyContent %}
+  {% if not flags %}
+  <h3>No Employment Type/h3>
+  {% else %}
+    {% for employmentType  in employmentTypes %}
+      <tr>
+        <td scope="row"><a href="{% url 'edit-employmentType' employmentType.id %}?next={{ request.path }}">{{ employmentType.id }}</a></td>
+        <td>{{ employmentType.name}}</td>
+        <td>{{ employmentType.description|slice:"0:100" }}{% if employmentType.description|length > 100 %}...{% endif %}</td>
+      </tr>
+    {% endfor %}
+  {% endif %}
+{% endblock %}
+
+ 
