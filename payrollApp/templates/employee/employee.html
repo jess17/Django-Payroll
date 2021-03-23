@@ -2,14 +2,19 @@
 
 {% block viewTitle %}Employee{% endblock %}
 {% block addBtn %}
-<a href="{% url 'create-position' %}?next={{ request.path }}" class="btn btn-pink">Add Position</a>
-<a href="{% url 'create-employmentType' %}?next={{ request.path }}" class="btn btn-pink">Add Employment Type</a>
-<a href="{% url 'create-employee' %}" class="btn btn-pink">Add Employee</a>
+<a href="{% url 'create-position' %}?next={{ request.path }}" class="btn btn-info">Add Position</a>
+<a href="{% url 'create-employmentType' %}?next={{ request.path }}" class="btn btn-info">Add Employment Type</a>
+<a href="{% url 'create-employee' %}" class="btn btn-info">Add Employee</a>
 
 {% endblock %}
 
 {% block columns %}
   {% if flags %}
+  {% block form %}
+    <form action="{% url 'delete-employee'%}" method="POST">{% csrf_token %}
+  {% endblock %}
+
+    <th></th>
     <th>ID</th>
     <th>Name</th>
     <th>Position</th>
@@ -25,6 +30,8 @@
   {% else %}
     {% for employee  in employees %}
       <tr>
+        <td><input type="checkbox" name="selected" value="{{ employee.id }}" id="enableDeleteBtn"></td>
+
         <td scope="row"><a href="{% url 'edit-employee' employee.id %}">{{ employee.id }}</a></td>
         <td>{{ employee.firstName}} {% if employee.lastName %}{{ employee.lastName }}{% endif %}</td>
         <!-- <td>{{ order.name }}</td> -->

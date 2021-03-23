@@ -2,11 +2,16 @@
 
 {% block viewTitle %}Employment Type{% endblock %}
 {% block addBtn %}
-  <a href="{% url 'create-employmentType' %}?next={{ request.path }}" class="btn btn-pink">Add Employment Type</a>
+  <a href="{% url 'create-employmentType' %}?next={{ request.path }}" class="btn btn-info">Add Employment Type</a>
 {% endblock %}
 
 {% block columns %}
   {% if flags %}
+    {% block form %}
+      <form action="{% url 'delete-employmentType'%}" method="POST">{% csrf_token %}
+    {% endblock %}
+
+    <th></th>
     <th>ID</th>
     <th>Employment Type</th>
     <th>Description/th>
@@ -19,6 +24,8 @@
   {% else %}
     {% for employmentType  in employmentTypes %}
       <tr>
+        <td><input type="checkbox" name="selected" value="{{ employmentType.id }}"></td>
+
         <td scope="row"><a href="{% url 'edit-employmentType' employmentType.id %}?next={{ request.path }}">{{ employmentType.id }}</a></td>
         <td>{{ employmentType.name}}</td>
         <td>{{ employmentType.description|slice:"0:100" }}{% if employmentType.description|length > 100 %}...{% endif %}</td>

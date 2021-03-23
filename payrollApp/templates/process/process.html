@@ -5,16 +5,21 @@
 {% block viewTitle %}Process{% endblock %}
 
 {% block addBtn %}
-{% if orderFlag %}
-  <a href="{% url 'create-process' %}?next={{ request.path }}" class="btn btn-pink">Add Process</a>
-{% else %}
-  <a href="{% url 'create-order' %}" class="btn btn-pink">Add Order</a>
-{% endif %}
+  {% if orderFlag %}
+    <a href="{% url 'create-process' %}?next={{ request.path }}" class="btn btn-info">Add Process</a>
+  {% else %}
+    <a href="{% url 'create-order' %}" class="btn btn-info">Add Order</a>
+  {% endif %}
 
 {% endblock %}
 
 {% block columns %}
   {% if flags %}
+    {% block form %}
+      <form action="{% url 'delete-process'%}" method="POST">{% csrf_token %}
+    {% endblock %}
+
+    <th></th>
     <th>ID</th>
     <th>Order Code</th>
     <th>Process Name</th>
@@ -32,6 +37,8 @@
   {% else %}
     {% for process in processes %}
       <tr>
+        <td><input type="checkbox" name="selected" value="{{ process.id }}"></td>
+
         <td scope="row"><a href="{% url 'edit-process' process.id %}?next={{ request.path }}">{{ process.id }}</a></td>
         <td><a href="{% url 'process-of-order' process.orderId|escape|getID %}">{{ process.orderId }}</a></td>
         <td>{{ process.name }}</td>

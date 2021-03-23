@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
+from django.contrib import messages
 
 from .models import Order, Process, Employee, EmploymentType, Position
 from .forms import OrderForm, ProcessForm, EmployeeForm, PositionForm, EmploymentTypeForm
@@ -46,6 +47,18 @@ def order_edit_view(request, order_id):
     return render(request, 'order/order_edit.html', {
         "form": form
     })
+
+def order_delete_view(request, id=None):
+    if request.method == "POST":
+      idList = request.POST.getlist("selected")
+      for i in idList:
+        Order.objects.get(id=i).delete()
+      if idList:
+        messages.success(request, "Selected rows has been successfully deleted")
+      else:
+        messages.info(request, "Nothing is selected")
+    return redirect(order_view)
+
 
 
 
@@ -150,6 +163,16 @@ def process_edit_view(request, process_id):
         "form": form
     })
 
+def process_delete_view(request, id=None):
+    if request.method == "POST":
+      idList = request.POST.getlist("selected")
+      for i in idList:
+        Process.objects.get(id=i).delete()
+      if idList:
+        messages.success(request, "Selected rows has been successfully deleted")
+      else:
+        messages.info(request, "Nothing is selected")
+    return redirect(process_view)
 
 
 
@@ -200,6 +223,20 @@ def employee_edit_view(request, employee_id):
         "form": form
     })
 
+def employee_delete_view(request, id=None):
+    if request.method == "POST":
+      idList = request.POST.getlist("selected")
+      for i in idList:
+        Employee.objects.get(id=i).delete()
+      if idList:
+        messages.success(request, "Selected rows has been successfully deleted")
+      else:
+        messages.info(request, "Nothing is selected")
+    return redirect(employee_view)
+
+
+
+
 
 
 
@@ -245,6 +282,19 @@ def position_edit_view(request, position_id):
         "form": form
     })
 
+def position_delete_view(request, id=None):
+    if request.method == "POST":
+      idList = request.POST.getlist("selected")
+      # print("idList", idList)
+      for i in idList:
+        # print(i)
+        Position.objects.get(id=i).delete()
+      if idList:
+        # print("Something is inside of idList")
+        messages.success(request, "Selected rows has been successfully deleted")
+      else:
+        messages.info(request, "Nothing is selected")
+    return redirect(position_view)
 
 
 
@@ -287,3 +337,14 @@ def employmentType_edit_view(request, employmentType_id):
     return render(request, 'employee/employmentType/employmentType_edit.html', {
         "form": form
     })
+
+def employmentType_delete_view(request, id=None):
+    if request.method == "POST":
+      idList = request.POST.getlist("selected")
+      for i in idList:
+        EmploymentType.objects.get(id=i).delete()
+      if idList:
+        messages.success(request, "Selected rows has been successfully deleted")
+      else:
+        messages.info(request, "Nothing is selected")
+    return redirect(employmentType_view)

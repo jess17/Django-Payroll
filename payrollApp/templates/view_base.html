@@ -7,15 +7,40 @@
 {% endblock %}
 
 {% block page %}
+
   <div class="card">
     <div class="card-header bg-blue">
       <h4 class="card-title text-center text-white">{% block viewTitle %}{% endblock %}</h4>
     </div>
     <div class="card-body">
-      <div class="text-right" style="padding-bottom: 17px;">
-        {% block addBtn %}{% endblock %}
+      <div class="flex">
+        {% if messages %}
+            {% for message in messages %}
+              {% if message|escape == "Nothing is selected" %}
+              <div class="alert alert-warning" role="alert">
+              {% else %}
+              <div class="alert alert-success" role="alert">
+              {% endif %}
+              {{ message }}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            {% endfor %}
+        {% endif %}
 
+        <div class="text-right" style="padding-bottom: 17px;">
+          {% block addBtn %}{% endblock %}
+          <!-- Button trigger modal -->
+          <button type="button" class="btn btn-pink" data-toggle="modal" data-target="#deleteConf" id="delBtn" >
+            Delete
+          </button>
+
+        </div>
       </div>
+      
+      
+        {% block form %}{% endblock %}
       <table class="table table-bordered table-hover table-striped">
         <thead>
           <tr class="bg-gray">
@@ -27,6 +52,29 @@
         {% endblock %}
       </tbody>
       </table>
+      
+
+        <!-- Modal -->
+        <div class="modal fade" id="deleteConf" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Delete Confirmation</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                Are you sure you want to permanently delete the selected record?
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <input type="submit" value="Delete" class="btn btn-pink"/>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
     </div>
   </div>
   

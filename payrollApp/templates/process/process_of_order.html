@@ -5,7 +5,7 @@
 {% block viewTitle %}Process of Order {{ order.code|capfirst }}{% endblock %}
 
 {% block addBtn %}
-  <a href="{% url 'create-process' order.id%}?next={{ request.path }}" class="btn btn-pink">Add Process</a>
+  <a href="{% url 'create-process' order.id%}?next={{ request.path }}" class="btn btn-info">Add Process</a>
 {% endblock %}
 
 

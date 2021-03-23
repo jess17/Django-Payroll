@@ -1,19 +1,24 @@
 {% extends 'view_base.html' %}
 
 {% block viewTitle %}Order{% endblock %}
-{% block addBtn %}<a href="{% url 'create-order' %}" class="btn btn-pink">Add Order</a>{% endblock %}
+{% block addBtn %}<a href="{% url 'create-order' %}" class="btn btn-info">Add Order</a>{% endblock %}
 
 {% block columns %}
-{% if flags %}
-  <th>ID</th>
-  <th>Order Code</th>
-  <th>Order Name</th>
-  <th>Quantity</th>
-  <th>Description</th>
-  <th>Date Created</th>
-  <th>Last Modified</th>
-  <th>Action</th>
-{% endif %}
+  {% if flags %}
+    {% block form %}
+      <form action="{% url 'delete-order'%}" method="POST">{% csrf_token %}
+    {% endblock %}
+
+    <th></th>
+    <th>ID</th>
+    <th>Order Code</th>
+    <th>Order Name</th>
+    <th>Quantity</th>
+    <th>Description</th>
+    <th>Date Created</th>
+    <th>Last Modified</th>
+    <th>Action</th>
+  {% endif %}
 {% endblock %}
             
 {% block tbodyContent %}
@@ -24,6 +29,8 @@
     {% for order  in orders %}
 
       <tr>
+        <td><input type="checkbox" name="selected" value="{{ order.id }}"></td>
+
         <td scope="row"><a href="{% url 'edit-order' order.id %}">{{ order.id }}</a></td>
         <td>{{ order.code }}</td>
         <td>{{ order.name }}</td>
@@ -31,7 +38,7 @@
         <td>{{ order.description|slice:"0:50" }}{% if order.description|length > 50 %}...{% endif %}</td>
         <td>{{ order.dateCreated }}</td>
         <td>{{ order.lastModified }}</td>
-        <td><a href="{% url 'process-of-order' order.id%}" class="btn btn-pink">View Process</a></td>
+        <td><a href="{% url 'process-of-order' order.id%}" class="btn btn-warning">View Process</a></td>
       </tr>
 
     {% endfor %}
