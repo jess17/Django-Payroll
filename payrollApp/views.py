@@ -2,8 +2,8 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib import messages
 
-from .models import Order, Process, Employee, EmploymentType, Position
-from .forms import OrderForm, ProcessForm, EmployeeForm, PositionForm, EmploymentTypeForm
+from .models import Order, Process, Employee, EmploymentType, Position, CompletedProcess
+from .forms import OrderForm, ProcessForm, EmployeeForm, PositionForm, EmploymentTypeForm, CompletedProcessForm
 # Create your views here.
 def home_view(request):
     return render(request, "real_base.html", {})
@@ -348,3 +348,108 @@ def employmentType_delete_view(request, id=None):
       else:
         messages.info(request, "Nothing is selected")
     return redirect(employmentType_view)
+
+
+
+
+
+
+
+
+
+
+
+
+#COMPLETED PROCESS RELATED VIEWS
+def completedProcess_view(request):
+  completedProcesses = CompletedProcess.objects.all()
+  flag   = True
+  if not completedProcesses:
+    flag=False
+
+  processes = Process.objects.exists()
+  processFlag=True
+  if not processes:
+    #Orders is empty
+    processFlag=False
+
+  context = {
+    'completedProcesses':completedProcesses,
+    'processFlag':processFlag,
+    'flags':flag,
+  }
+  return render(request, "completedProcess/completedProcess.html", context)
+
+def completedProcess_of_process_view(request, process_id):
+  process = Process.objects.get(id=process_id)
+  completedProcesses = CompletedProcess.objects.filter(processID=process_id)
+  print(request)
+
+  if completedProcesses:
+    #There's at least one completedProcess
+    flag=True
+  else:
+    flag=False
+  
+  context = {
+    'completedProcesses':completedProcesses,
+    'flags':flag,
+    'process':process,
+  }
+  return render(request, "completedProcess/completedProcess_of_process.html", context)
+
+def completedProcess_create_view(request):
+  form = CompletedProcessForm(request.POST or None)
+  if form.is_valid():
+    form.save()
+    return redirect(request.GET.get("next"))
+
+  context = {
+    'form':form
+  }
+  return render(request, "completedProcess/completedProcess_create.html", context)
+
+def completedProcess_process_create_view(request, process_id):
+  form = CompletedProcessForm(request.POST or None)
+  form.fields['processID'].initial = process_id
+  form.fields['processID'].disabled = True
+  process = Process.objects.get(id=process_id)
+  # form.fields['quantity'].initial = process.quantity
+
+
+  if form.is_valid():
+    form.save()
+    return redirect(request.GET.get("next"))
+
+  context = {
+    'form':form
+  }
+  return render(request, "completedProcess/completedProcess_create.html", context)
+
+def completedProcess_edit_view(request, completedProcess_id):
+    form = CompletedProcessForm(instance=CompletedProcess.objects.get(id=completedProcess_id))
+
+    if request.method == "POST":
+        form = CompletedProcessForm(request.POST, request.FILES, instance=CompletedProcess.objects.get(id=completedProcess_id))
+        
+        errMsg = "Quantity can't be greater than " + str(maxVal)
+        raise ValidationError(errMsg)
+        if form.is_valid():
+            form.save()
+            # return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+            return redirect(request.GET.get("next"))
+
+    return render(request, 'completedProcess/completedProcess_edit.html', {
+        "form": form
+    })
+
+def completedProcess_delete_view(request, id=None):
+    if request.method == "POST":
+      idList = request.POST.getlist("selected")
+      for i in idList:
+        CompletedProcess.objects.get(id=i).delete()
+      if idList:
+        messages.success(request, "Selected rows has been successfully deleted")
+      else:
+        messages.info(request, "Nothing is selected")
+    return redirect(completedProcess_view)

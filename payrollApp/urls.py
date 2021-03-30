@@ -5,6 +5,7 @@ from . import views
 
 urlpatterns = [
     path('', views.home_view, name="home"),
+
     path('order/', views.order_view, name="order"),
     path('order/create/', views.order_create_view, name="create-order"),
     path('order/edit/<order_id>/', views.order_edit_view, name="edit-order"),
@@ -32,4 +33,11 @@ urlpatterns = [
     path('employmentType/create/', views.employmentType_create_view, name="create-employmentType"),
     path('employmentType/edit/<employmentType_id>/', views.employmentType_edit_view, name="edit-employmentType"),
     path('employmentType/delete/', views.employmentType_delete_view, name="delete-employmentType"),
+
+    path('completedProcess/', views.completedProcess_view, name="completedProcess"),
+    path('completedProcess/process/<process_id>/', views.completedProcess_of_process_view, name="completedProcess-of-process"),
+    path('completedProcess/create/', views.completedProcess_create_view, name="create-completedProcess"),
+    path('completedProcess/create/<process_id>/', views.completedProcess_process_create_view, name="create-completedProcess"),
+    path('completedProcess/edit/<completedProcess_id>/', views.completedProcess_edit_view, name="edit-completedProcess"),
+    path('completedProcess/delete/', views.completedProcess_delete_view, name="delete-completedProcess"),
 ]

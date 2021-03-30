@@ -1,8 +1,10 @@
 from django.db import models
 
-from django.core.validators import MinValueValidator
-from django.db.models import Q
-from django.db.models import constraints
+from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.exceptions import ValidationError
+# from django.db.models import Q
+# from django.db.models import constraints
+from django.db.models import Sum
 
 # Create your models here.
 class Order(models.Model):
@@ -23,16 +25,16 @@ class Process(models.Model):
   quantity    = models.PositiveIntegerField()
   description = models.TextField(blank=True, null=True)
 
-  class Meta:
-        constraints = [
-            constraints.CheckConstraint(
-                check=Q(price__gte=0),
-                name='price_positive'
-            )
-        ]
+  # class Meta:
+  #       constraints = [
+  #           constraints.CheckConstraint(
+  #               check=Q(price__gte=0),
+  #               name='price_positive'
+  #           )
+  #       ]
 
   def __str__(self):
-    return str(self.id)+". "+self.name
+    return str(self.id)+" | "+self.name
 
 class Employee(models.Model):
   firstName      = models.CharField(max_length=30)
@@ -61,5 +63,40 @@ class EmploymentType(models.Model):
 
   def __str__(self):
     return self.name
+
+class CompletedProcess(models.Model):
+  processID     = models.ForeignKey('Process', default=None, null=True, on_delete=models.SET_DEFAULT)
+  employeeID    = models.ForeignKey('Employee', default=None, null=True, on_delete=models.SET_DEFAULT)
+  
+  # from .forms import CompletedProcessForm
+  # currentProcessID = CompletedProcessForm(request.POST).cleaned_data['processID']
+  # processQty  = getattr(Process.objects.get(id=currentProcessId), 'quantity')
+  # completedProcessQty = CompletedProcess.objects.filter(processId=currentProcessId).aggregate(maxVal=Sum('quantity'))
+  # maxVal = processQty-completedProcessQty
+  # quantity      = models.PositiveIntegerField(validators=[MaxValueValidator(maxVal, message="Quantity can't be greater than"+str(maxVal))])
+  quantity      = models.PositiveIntegerField(validators=[MinValueValidator(1, message="Quantity can't be less than 1")])
+  dateRecorded  = models.DateTimeField(auto_now_add=True)
+
+  def clean(self):
+    # print("Process ID after split: ", int(str(self.processID).split("|")[0]))
+    currentProcessID    = int(str(self.processID).split("|")[0])
+    processQty          = getattr(Process.objects.get(id=currentProcessID), 'quantity')
+    completedProcessQty = CompletedProcess.objects.filter(processID=currentProcessID).aggregate(completedProcessQty=Sum('quantity'))
+    print(completedProcessQty)
+    if completedProcessQty['completedProcessQty'] != None:
+      maxVal = processQty - completedProcessQty['completedProcessQty']
+    else:
+      maxVal = processQty
+    
+      # print("Self quantity: ", self.quantity)
+      # maxVal = maxVal + selfQty
+    
+    # quantity      = models.PositiveIntegerField(validators=[MaxValueValidator(maxVal, message="Quantity can't be greater than"+str(maxVal))])
+    if self.quantity > maxVal:
+      # print("Sth is wrong")
+      errMsg = "Quantity can't be greater than " + str(maxVal)
+      raise ValidationError(errMsg)
+    # print("Nothing is wrong")
+    # return cleaned_data
 
 
