@@ -47,8 +47,8 @@ class EmployeeForm(forms.ModelForm):
   email             = forms.EmailField(label='Email', required=False)
   address           = forms.CharField(max_length=200, label='Address', required=False)
   # forms.ModelChoiceField(queryset=Speed.objects.all())
-  positionID        = forms.ModelChoiceField(queryset=Position.objects.all(),label='Position ID', required=False)
-  employmentTypeID  = forms.ModelChoiceField(queryset=EmploymentType.objects.all(), label='Employment Type ID', required=False)
+  positionID        = forms.ModelChoiceField(queryset=Position.objects.all(),label='Position', required=False)
+  employmentTypeID  = forms.ModelChoiceField(queryset=EmploymentType.objects.all(), label='Employment Type', required=False)
   terminationDate   = forms.DateTimeField(label='Termination Date', required=False,
         widget=forms.SelectDateWidget(
         empty_label=("Choose Year", "Choose Month", "Choose Day"),

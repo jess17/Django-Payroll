@@ -21,6 +21,12 @@
     // })
   </script>
 
+{% url 'employee' as employee_url %}
+{% url 'position' as position_url %}
+{% url 'employmentType' as employmentType_url %}
+{% url 'order' as order_url %}
+{% url 'process' as process_url %}
+
 
   <div>
     <nav class="navbar navbar-dark navbar-expand-sm">
@@ -41,14 +47,16 @@
         <div class="list-group">
           <span class="text-uppercase">Dashboard</span>
 
-          <a href="{% url 'employee' %}" class="list-group-item {% if request.path == restaurant_meal_url %} active {% endif %}">Employees</a>
+          <a href="{% url 'employee' %}" class="list-group-item {% if request.path == employee_url %}  active {% endif %}">Employees</a>
+          <a href="{% url 'position' %}" class="list-group-item {% if request.path == position_url %} active {% endif %}">Position</a>
+          <a href="{% url 'employmentType' %}" class="list-group-item {% if request.path == employmentType_url %} active {% endif %}">Employment Type</a>
+
           <a href="{% url 'order' %}"
-            class="list-group-item {% if request.path == restaurant_order_url %} active {% endif %}">Orders
+            class="list-group-item {% if request.path == order_url %} active {% endif %}">Orders
             <span class="badge"></span>
           </a>
-          <a href="{% url 'process' %}" class="list-group-item {% if request.path == restaurant_meal_url %} active {% endif %}">Processes</a>
-          <a href="{% url 'position' %}" class="list-group-item {% if request.path == restaurant_meal_url %} active {% endif %}">Position</a>
-          <a href="{% url 'employmentType' %}" class="list-group-item {% if request.path == restaurant_meal_url %} active {% endif %}">Employment Type</a>
+          <a href="{% url 'process' %}" class="list-group-item {% if request.path == process_url %} active {% endif %}">Processes</a>
+          
 
             
           <a href="#" class="list-group-item {% if request.path == restaurant_report_url %} active {% endif %}">Reports</a>
