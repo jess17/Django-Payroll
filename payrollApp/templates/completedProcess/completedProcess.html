@@ -22,8 +22,8 @@
     <th></th>
 
     <th>ID</th>
-    <th>Process Name</th>
-    <th>Employee Name</th>
+    <th>ID | Process Name</th>
+    <th>ID | Employee Name</th>
     <th>Quantity</th>
     <th>Date Recorded</th>
   {% endif %}
@@ -41,7 +41,7 @@
 
         <td scope="row"><a href="{% url 'edit-completedProcess' completedProcess.id %}?next={{ request.path }}">{{ completedProcess.id }}</a></td>
         <td><a href="{% url 'completedProcess-of-process' completedProcess.processID|escape|getID %}">{{ completedProcess.processID }}</a></td>
-        <td>{{ completedProcess.employeeID }}</td>
+        <td><a href="{% url 'completedProcess-of-employee' completedProcess.employeeID|escape|getID %}">{{ completedProcess.employeeID }}</a></td>
         <td>{{ completedProcess.quantity }}</td>
         <td>{{ completedProcess.dateRecorded  }}</td>
       </tr>

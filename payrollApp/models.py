@@ -81,10 +81,11 @@ class CompletedProcess(models.Model):
     # print("Process ID after split: ", int(str(self.processID).split("|")[0]))
     currentProcessID    = int(str(self.processID).split("|")[0])
     processQty          = getattr(Process.objects.get(id=currentProcessID), 'quantity')
-    completedProcessQty = CompletedProcess.objects.filter(processID=currentProcessID).aggregate(completedProcessQty=Sum('quantity'))
-    print(completedProcessQty)
+    completedProcessQty = CompletedProcess.objects.filter(processID=currentProcessID).exclude(id=self.id).aggregate(completedProcessQty=Sum('quantity'))
+    
     if completedProcessQty['completedProcessQty'] != None:
       maxVal = processQty - completedProcessQty['completedProcessQty']
+    #No completed process of this process
     else:
       maxVal = processQty
     
@@ -98,5 +99,8 @@ class CompletedProcess(models.Model):
       raise ValidationError(errMsg)
     # print("Nothing is wrong")
     # return cleaned_data
+
+  def __str__(self):
+    return str(self.processID) + " | " + str(self.employeeID)
 
 

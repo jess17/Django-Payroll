@@ -36,8 +36,10 @@ urlpatterns = [
 
     path('completedProcess/', views.completedProcess_view, name="completedProcess"),
     path('completedProcess/process/<process_id>/', views.completedProcess_of_process_view, name="completedProcess-of-process"),
+    path('completedProcess/employee/<employee_id>/', views.completedProcess_of_employee_view, name="completedProcess-of-employee"),
     path('completedProcess/create/', views.completedProcess_create_view, name="create-completedProcess"),
     path('completedProcess/create/<process_id>/', views.completedProcess_process_create_view, name="create-completedProcess"),
+    path('completedProcess/employee/create/<employee_id>/', views.completedProcess_employee_create_view, name="create-completedProcess-employee"),
     path('completedProcess/edit/<completedProcess_id>/', views.completedProcess_edit_view, name="edit-completedProcess"),
     path('completedProcess/delete/', views.completedProcess_delete_view, name="delete-completedProcess"),
 ]

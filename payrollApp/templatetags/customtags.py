@@ -5,3 +5,7 @@ register = template.Library()
 @register.filter(name='getID')
 def getID(value):
   return int(value.split("|")[0])
+
+# @register.filter(name='getName')
+# def getName(value):
+#   return str(value.split("|")[1])

@@ -398,6 +398,23 @@ def completedProcess_of_process_view(request, process_id):
   }
   return render(request, "completedProcess/completedProcess_of_process.html", context)
 
+def completedProcess_of_employee_view(request, employee_id):
+  employee = Employee.objects.get(id=employee_id)
+  completedProcesses = CompletedProcess.objects.filter(employeeID=employee_id)
+
+  if completedProcesses:
+    #There's at least one completedProcess
+    flag=True
+  else:
+    flag=False
+  
+  context = {
+    'completedProcesses':completedProcesses,
+    'flags':flag,
+    'employee':employee,
+  }
+  return render(request, "completedProcess/completedProcess_of_employee.html", context)
+
 def completedProcess_create_view(request):
   form = CompletedProcessForm(request.POST or None)
   if form.is_valid():
@@ -426,14 +443,31 @@ def completedProcess_process_create_view(request, process_id):
   }
   return render(request, "completedProcess/completedProcess_create.html", context)
 
+def completedProcess_employee_create_view(request, employee_id):
+  form = CompletedProcessForm(request.POST or None)
+  form.fields['employeeID'].initial = employee_id
+  form.fields['employeeID'].disabled = True
+  employee = Employee.objects.get(id=employee_id)
+  # form.fields['quantity'].initial = process.quantity
+
+
+  if form.is_valid():
+    form.save()
+    return redirect(request.GET.get("next"))
+
+  context = {
+    'form':form
+  }
+  return render(request, "completedProcess/completedProcess_create.html", context)
+
 def completedProcess_edit_view(request, completedProcess_id):
     form = CompletedProcessForm(instance=CompletedProcess.objects.get(id=completedProcess_id))
 
     if request.method == "POST":
         form = CompletedProcessForm(request.POST, request.FILES, instance=CompletedProcess.objects.get(id=completedProcess_id))
         
-        errMsg = "Quantity can't be greater than " + str(maxVal)
-        raise ValidationError(errMsg)
+        # errMsg = "Quantity can't be greater than " + str(maxVal)
+        # raise ValidationError(errMsg)
         if form.is_valid():
             form.save()
             # return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
