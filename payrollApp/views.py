@@ -4,6 +4,9 @@ from django.contrib import messages
 
 from .models import Order, Process, Employee, EmploymentType, Position, CompletedProcess, Salary
 from .forms import OrderForm, ProcessForm, EmployeeForm, PositionForm, EmploymentTypeForm, CompletedProcessForm, SalaryForm
+
+from dal import autocomplete
+
 # Create your views here.
 def home_view(request):
     return render(request, "real_base.html", {})
@@ -493,7 +496,22 @@ def completedProcess_delete_view(request, id=None):
         messages.info(request, "Nothing is selected")
     return redirect(completedProcess_view)
 
+class ProcessIDAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        # if not self.request.user.is_authenticated:
+        #     return Process.objects.none()
 
+        qs = Process.objects.all()
+
+        # continent = self.forwarded.get('continent', None)
+
+        # if continent:
+        #     qs = qs.filter(continent=continent)
+
+        if self.q:
+            qs = qs.filter(name__istartswith=self.q)
+
+        return qs
 
 
 
@@ -546,12 +564,15 @@ def salary_edit_view(request, salary_id):
   })
 
 def salary_delete_view(request, id=None):
+  delete(request, Salary, redirect(salary_view))
+
+def delete(request, Object, returnVal):
   if request.method == "POST":
     idList = request.POST.getlist("selected")
     for i in idList:
-      Salary.objects.get(id=i).delete()
+      Object.objects.get(id=i).delete()
     if idList:
       messages.success(request, "Selected rows has been successfully deleted")
     else:
       messages.info(request, "Nothing is selected")
-  return redirect(salary_view)
+  return returnVal

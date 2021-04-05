@@ -4,6 +4,8 @@ from django import forms
 from .models import Order, Process, Employee, Position, EmploymentType, CompletedProcess
 from django import forms
 
+from dal import autocomplete
+
 class OrderForm(forms.ModelForm):
   class Meta:
     model = Order
@@ -103,6 +105,9 @@ class CompletedProcessForm(forms.ModelForm):
       'employeeID',
       'quantity'
     ]
+    widgets = {
+      'processID': autocomplete.ModelSelect2(url='processID-autocomplete')
+    }
 
 class SalaryForm(forms.ModelForm):
   employeeID = forms.ModelChoiceField(

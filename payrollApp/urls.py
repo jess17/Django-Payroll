@@ -42,4 +42,6 @@ urlpatterns = [
     path('completedProcess/employee/create/<employee_id>/', views.completedProcess_employee_create_view, name="create-completedProcess-employee"),
     path('completedProcess/edit/<completedProcess_id>/', views.completedProcess_edit_view, name="edit-completedProcess"),
     path('completedProcess/delete/', views.completedProcess_delete_view, name="delete-completedProcess"),
+
+    path('completedProcess/process-autocomplete/', ProcessIDAutocomplete.as_view(), name="processID-autocomplete"),
 ]
