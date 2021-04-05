@@ -49,7 +49,10 @@ class Employee(models.Model):
   notes          = models.TextField(blank=True, null=True)
 
   def __str__(self):
-    return str(self.id)+" | "+self.firstName
+    if self.lastName:
+      return str(self.id)+" | "+self.firstName.capitalize()+" "+self.lastName.capitalize()
+    else:
+      return str(self.id)+" | "+self.firstName.capitalize()
 
 class Position(models.Model):
   name = models.CharField(max_length=60)
@@ -100,7 +103,7 @@ class CompletedProcess(models.Model):
     return str(self.processID) + " | " + str(self.employeeID)
 
 class Salary(models.Model):
-  employeeID    = models.ForeignKey('Employee', default=None, null=True, on_delete=models.SET_DEFAULT, unique=True)
+  employeeID    = models.OneToOneField('Employee', on_delete=models.CASCADE, unique=True)
   salary        = models.DecimalField(decimal_places=2, max_digits=100, validators=[MinValueValidator(0, message="Salary can't be less than 0")])
   notes         = models.TextField(blank=True, null=True)
   lastModified  = models.DateTimeField(auto_now=True)

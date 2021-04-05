@@ -4,7 +4,10 @@ register = template.Library()
 
 @register.filter(name='getID')
 def getID(value):
-  return int(value.split("|")[0])
+  if value != str('None'):
+    return int(value.split("|")[0])
+  else:
+    return 'None'
 
 # @register.filter(name='getName')
 # def getName(value):

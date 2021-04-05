@@ -6,7 +6,7 @@
 {% block columns %}
   {% if flags %}
     {% block form %}
-      <form action="{% url 'delete-order'%}" method="POST">{% csrf_token %}
+      <form action="{% url 'delete-order'%}?next={{ request.path }}" method="POST">{% csrf_token %}
     {% endblock %}
 
     <th></th>

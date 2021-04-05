@@ -1,4 +1,5 @@
 {% extends 'view_base.html' %}
+{% load customtags %}
 
 {% block viewTitle %}Employee{% endblock %}
 {% block addBtn %}
@@ -9,34 +10,33 @@
 {% block columns %}
   {% if flags %}
   {% block form %}
-    <form action="{% url 'delete-salary'%}" method="POST">{% csrf_token %}
+    <form action="{% url 'delete-salary'%}?next={{ request.path }}" method="POST">{% csrf_token %}
   {% endblock %}
 
     <th></th>
     <th>ID</th>
-    <th>Name</th>
-    <th>Position</th>
-    <th>Employment Type</th>
-    <th>Date Hired</th>
+    <th>ID | Employee</th>
+    <th>Daily Salary</th>
     <th>Notes</th>
+    <th>Last Modified</th>
   {% endif %}
 {% endblock %}
-            
+
+
+
 {% block tbodyContent %}
   {% if not flags %}
-  <h3>No Employee</h3>
+  <h3>No Salary Record</h3>
   {% else %}
-    {% for salary  in salarys %}
+    {% for salary  in salaries %}
       <tr>
         <td><input type="checkbox" name="selected" value="{{ salary.id }}" id="enableDeleteBtn"></td>
 
-        <td scope="row"><a href="{% url 'edit-salary' salary.id %}">{{ salary.id }}</a></td>
-        <td>{{ salary.firstName|capfirst }} {% if salary.lastName %}{{ salary.lastName|capfirst }}{% endif %}</td>
-        <!-- <td>{{ order.name }}</td> -->
-        <td>{{ salary.positionID }}</td> 
-        <td>{{ salary.employmentTypeID }}</td>
-        <td>{{ salary.hireDate }}</td>
+        <td><a href="{% url 'edit-salary' salary.id %}">{{ salary.id }}</a></td>
+        <td><a href="{% url 'edit-employee' salary.employeeID|escape|getID %}?next={{ request.path }}">{{ salary.employeeID }}</a></td>
+        <td>{{ salary.salary }}</td> 
         <td>{{ salary.notes|slice:"0:37" }}{% if salary.notes|length > 37 %}...{% endif %}</td>
+        <td>{{ salary.lastModified }}</td>
       </tr>
     {% endfor %}
   {% endif %}

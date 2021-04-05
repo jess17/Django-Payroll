@@ -1,12 +1,24 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib import messages
+from django.core.exceptions import ValidationError
 
 from .models import Order, Process, Employee, EmploymentType, Position, CompletedProcess, Salary
 from .forms import OrderForm, ProcessForm, EmployeeForm, PositionForm, EmploymentTypeForm, CompletedProcessForm, SalaryForm
 # Create your views here.
 def home_view(request):
     return render(request, "real_base.html", {})
+
+
+def delete(request, Object):
+  if request.method == "POST":
+    idList = request.POST.getlist("selected")
+  for i in idList:
+    Object.objects.get(id=i).delete()
+  if idList:
+    messages.success(request, "Selected rows has been successfully deleted")
+  else:
+    messages.info(request, "Nothing is selected")
 
 
 #ORDER RELATED VIEWS
@@ -49,15 +61,8 @@ def order_edit_view(request, order_id):
     })
 
 def order_delete_view(request, id=None):
-    if request.method == "POST":
-      idList = request.POST.getlist("selected")
-      for i in idList:
-        Order.objects.get(id=i).delete()
-      if idList:
-        messages.success(request, "Selected rows has been successfully deleted")
-      else:
-        messages.info(request, "Nothing is selected")
-    return redirect(order_view)
+  delete(request, Order)
+  return redirect(request.GET.get("next"))
 
 
 
@@ -148,30 +153,30 @@ def process_order_create_view(request, order_id):
   return render(request, "process/process_create.html", context)
 
 def process_edit_view(request, process_id):
-    form = ProcessForm(instance=Process.objects.get(id=process_id))
+  form = ProcessForm(instance=Process.objects.get(id=process_id))
+  
+  # print("Completed quantity: ", completedQty)
 
-    if request.method == "POST":
-        form = ProcessForm(request.POST, request.FILES, instance=Process.objects.get(id=process_id))
+  # print(form['quantity'].value())
+  
 
-        if form.is_valid():
-            form.save()
-            # return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-            return redirect(request.GET.get("next"))
+  if request.method == "POST":
+    # print("Process ID (View): ", process_id)
+    form = ProcessForm(request.POST, request.FILES, instance=Process.objects.get(id=process_id), id=process_id)
 
-    return render(request, 'process/process_edit.html', {
-        "form": form
-    })
+
+    if form.is_valid():
+        form.save()
+        # return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+        return redirect(request.GET.get("next"))
+
+  return render(request, 'process/process_edit.html', {
+      "form": form,
+  })
 
 def process_delete_view(request, id=None):
-    if request.method == "POST":
-      idList = request.POST.getlist("selected")
-      for i in idList:
-        Process.objects.get(id=i).delete()
-      if idList:
-        messages.success(request, "Selected rows has been successfully deleted")
-      else:
-        messages.info(request, "Nothing is selected")
-    return redirect(process_view)
+  delete(request, Process)
+  return redirect(request.GET.get("next"))
 
 
 
@@ -199,7 +204,7 @@ def employee_create_view(request):
 
   if form.is_valid():
     form.save()
-    return redirect(employee_view)
+    return redirect(request.GET.get("next"))
 
   context = {
     'form':form,
@@ -216,22 +221,15 @@ def employee_edit_view(request, employee_id):
 
         if form.is_valid():
             form.save()
-            return redirect(employee_view)
+            return redirect(request.GET.get("next"))
 
     return render(request, 'employee/employee_edit.html', {
         "form": form
     })
 
 def employee_delete_view(request, id=None):
-    if request.method == "POST":
-      idList = request.POST.getlist("selected")
-      for i in idList:
-        Employee.objects.get(id=i).delete()
-      if idList:
-        messages.success(request, "Selected rows has been successfully deleted")
-      else:
-        messages.info(request, "Nothing is selected")
-    return redirect(employee_view)
+  delete(request, Employee)
+  return redirect(employee_view)
 
 
 
@@ -282,18 +280,8 @@ def position_edit_view(request, position_id):
     })
 
 def position_delete_view(request, id=None):
-    if request.method == "POST":
-      idList = request.POST.getlist("selected")
-      # print("idList", idList)
-      for i in idList:
-        # print(i)
-        Position.objects.get(id=i).delete()
-      if idList:
-        # print("Something is inside of idList")
-        messages.success(request, "Selected rows has been successfully deleted")
-      else:
-        messages.info(request, "Nothing is selected")
-    return redirect(position_view)
+  delete(request, Position)
+  return redirect(position_view)
 
 
 
@@ -344,15 +332,8 @@ def employmentType_edit_view(request, employmentType_id):
     })
 
 def employmentType_delete_view(request, id=None):
-    if request.method == "POST":
-      idList = request.POST.getlist("selected")
-      for i in idList:
-        EmploymentType.objects.get(id=i).delete()
-      if idList:
-        messages.success(request, "Selected rows has been successfully deleted")
-      else:
-        messages.info(request, "Nothing is selected")
-    return redirect(employmentType_view)
+  delete(request, EmploymentType)
+  return redirect(employmentType_view)
 
 
 
@@ -388,7 +369,12 @@ def completedProcess_view(request):
 def completedProcess_of_process_view(request, process_id):
   process = Process.objects.get(id=process_id)
   completedProcesses = CompletedProcess.objects.filter(processID=process_id)
-  # print(request)
+
+  #Count total completed quantity of current process
+  completedProcessesQty = completedProcesses.values('quantity')
+  completedQty=0
+  for completedProcessQty in completedProcessesQty:
+    completedQty = completedQty + completedProcessQty['quantity']
 
   if completedProcesses:
     #There's at least one completedProcess
@@ -400,6 +386,7 @@ def completedProcess_of_process_view(request, process_id):
     'completedProcesses':completedProcesses,
     'flags':flag,
     'process':process,
+    'completedQty':completedQty
   }
   return render(request, "completedProcess/completedProcess_of_process.html", context)
 
@@ -444,7 +431,8 @@ def completedProcess_process_create_view(request, process_id):
     return redirect(request.GET.get("next"))
 
   context = {
-    'form':form
+    'form':form,
+
   }
   return render(request, "completedProcess/completedProcess_create.html", context)
 
@@ -483,15 +471,8 @@ def completedProcess_edit_view(request, completedProcess_id):
     })
 
 def completedProcess_delete_view(request, id=None):
-    if request.method == "POST":
-      idList = request.POST.getlist("selected")
-      for i in idList:
-        CompletedProcess.objects.get(id=i).delete()
-      if idList:
-        messages.success(request, "Selected rows has been successfully deleted")
-      else:
-        messages.info(request, "Nothing is selected")
-    return redirect(completedProcess_view)
+  delete(request, CompletedProcess)
+  return redirect(request.GET.get("next"))
 
 
 
@@ -546,12 +527,6 @@ def salary_edit_view(request, salary_id):
   })
 
 def salary_delete_view(request, id=None):
-  if request.method == "POST":
-    idList = request.POST.getlist("selected")
-    for i in idList:
-      Salary.objects.get(id=i).delete()
-    if idList:
-      messages.success(request, "Selected rows has been successfully deleted")
-    else:
-      messages.info(request, "Nothing is selected")
-  return redirect(salary_view)
+  delete(request, Salary)
+  return  redirect(salary_view)
+
