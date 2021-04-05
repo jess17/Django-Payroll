@@ -2,8 +2,8 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib import messages
 
-from .models import Order, Process, Employee, EmploymentType, Position, CompletedProcess
-from .forms import OrderForm, ProcessForm, EmployeeForm, PositionForm, EmploymentTypeForm, CompletedProcessForm
+from .models import Order, Process, Employee, EmploymentType, Position, CompletedProcess, Salary
+from .forms import OrderForm, ProcessForm, EmployeeForm, PositionForm, EmploymentTypeForm, CompletedProcessForm, SalaryForm
 # Create your views here.
 def home_view(request):
     return render(request, "real_base.html", {})
@@ -11,7 +11,7 @@ def home_view(request):
 
 #ORDER RELATED VIEWS
 def order_view(request):
-  orders = Order.objects.all()
+  orders = Order.objects.all().order_by('-lastModified')
   flag   = True
   if not orders:
     flag=False
@@ -68,7 +68,7 @@ def order_delete_view(request, id=None):
 
 #PROCESS RELATED VIEWS
 def process_view(request):
-  processes = Process.objects.all()
+  processes = Process.objects.all().order_by('-id')
   flag   = True
   if not processes:
     flag=False
@@ -89,8 +89,7 @@ def process_view(request):
 def process_of_order_view(request, order_id):
   order = Order.objects.get(id=order_id)
   processes = Process.objects.filter(orderID=order_id)
-  print(request)
-  # processes = Process.objects.get(id=order_id)
+
   if processes:
     #There's at least one process
     flag=True
@@ -300,6 +299,12 @@ def position_delete_view(request, id=None):
 
 
 
+
+
+
+
+
+
 #EMPLOYMENT TYPE RELATED VIEWS
 def employmentType_view(request):
   employmentTypes = EmploymentType.objects.all()
@@ -362,7 +367,7 @@ def employmentType_delete_view(request, id=None):
 
 #COMPLETED PROCESS RELATED VIEWS
 def completedProcess_view(request):
-  completedProcesses = CompletedProcess.objects.all()
+  completedProcesses = CompletedProcess.objects.all().order_by('-id')
   flag   = True
   if not completedProcesses:
     flag=False
@@ -487,3 +492,66 @@ def completedProcess_delete_view(request, id=None):
       else:
         messages.info(request, "Nothing is selected")
     return redirect(completedProcess_view)
+
+
+
+
+
+
+
+
+
+
+
+
+#SALARY RELATED VIEWS
+def salary_view(request):
+  salaries = Salary.objects.all()
+  flag   = True
+  if not salaries:
+    flag=False
+
+  context = {
+    'salaries':salaries,
+    'flags':flag
+  }
+  return render(request, 'salary/salary.html', context)
+
+def salary_create_view(request):
+  form = SalaryForm(request.POST or None)
+  employees = Employee.objects.all()
+
+  if form.is_valid():
+    form.save()
+    return redirect(salary_view)
+
+  context = {
+    'form':form,
+    'employees': employees,
+  }
+  return render(request, "salary/salary_create.html", context)
+
+def salary_edit_view(request, salary_id):
+  form = SalaryForm(instance=Salary.objects.get(id=salary_id))
+
+  if request.method == "POST":
+      form = SalaryForm(request.POST, request.FILES, instance=Salary.objects.get(id=salary_id))
+
+      if form.is_valid():
+          form.save()
+          return redirect(salary_view)
+
+  return render(request, 'salary/salary_edit.html', {
+      "form": form
+  })
+
+def salary_delete_view(request, id=None):
+  if request.method == "POST":
+    idList = request.POST.getlist("selected")
+    for i in idList:
+      Salary.objects.get(id=i).delete()
+    if idList:
+      messages.success(request, "Selected rows has been successfully deleted")
+    else:
+      messages.info(request, "Nothing is selected")
+  return redirect(salary_view)

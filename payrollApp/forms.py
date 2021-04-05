@@ -103,3 +103,10 @@ class CompletedProcessForm(forms.ModelForm):
       'employeeID',
       'quantity'
     ]
+
+class SalaryForm(forms.ModelForm):
+  employeeID = forms.ModelChoiceField(
+    queryset=Employee.objects.all(), 
+    label='Employee ID', required=True, 
+    # widget=forms.AutocompleteSelectWidget()
+    )
