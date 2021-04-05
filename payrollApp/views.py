@@ -40,9 +40,9 @@ def order_edit_view(request, order_id):
         form = OrderForm(request.POST, request.FILES, instance=Order.objects.get(id=order_id))
 
         if form.is_valid():
-            form.save()
-            
-            return redirect(order_view)
+          form.save()
+          
+          return redirect(request.GET.get("next"))
 
     return render(request, 'order/order_edit.html', {
         "form": form
