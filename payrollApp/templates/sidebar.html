@@ -26,6 +26,7 @@
 {% url 'employmentType' as employmentType_url %}
 {% url 'order' as order_url %}
 {% url 'process' as process_url %}
+{% url 'completedProcess' as completedProcess_url %}
 
 
   <div>
@@ -56,6 +57,8 @@
             <span class="badge"></span>
           </a>
           <a href="{% url 'process' %}" class="list-group-item {% if request.path == process_url %} active {% endif %}">Processes</a>
+          
+          <a href="{% url 'completedProcess' %}" class="list-group-item {% if request.path == completedProcess_url %} active {% endif %}">Completed Process</a>
           
 
             

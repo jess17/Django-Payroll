@@ -11,8 +11,13 @@
 
 {% block columns %}
   {% if flags %}
+    {% block form %}
+      <form action="{% url 'delete-process'%}" method="POST">{% csrf_token %}
+    {% endblock %}
+    <th></th>
+
     <th>ID</th>
-    <th>Order Code</th>
+    <th>ID | Order Code</th>
     <th>Process Name</th>
     <th>Piece rate</th>
     <th>Quantity</th>
@@ -26,8 +31,10 @@
     {% else %} 
       {% for process in processes %}
         <tr>
+          <td><input type="checkbox" name="selected" value="{{ process.id }}"></td>
+
           <td scope="row"><a href="{% url 'edit-process' process.id %}?next={{ request.path }}">{{ process.id }}</a></td>
-          <td>{{ process.orderId }}</td>
+          <td>{{ process.orderID }}</td>
           <td>{{ process.name }}</td>
           <td>{{ process.price }}</td>
           <td>{{ process.quantity }}</td>

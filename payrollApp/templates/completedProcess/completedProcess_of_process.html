@@ -1,0 +1,47 @@
+{% extends 'view_base.html' %}
+
+{% load static %}
+
+{% block viewTitle %}Completed Process of Process {{ process.name|capfirst }}{% endblock %}
+
+{% block addBtn %}
+  <a href="{% url 'create-completedProcess' process.id %}?next={{ request.path }}" class="btn btn-info">Add Completed Process</a>
+{% endblock %}
+
+{% load customtags %}
+
+{% block columns %}
+  {% if flags %}
+    {% block form %}
+      <form action="{% url 'delete-completedProcess'%}" method="POST">{% csrf_token %}
+    {% endblock %}
+    <th></th>
+
+    <th>ID</th>
+    <th>ID | Process Name</th>
+    <th>ID | Employee Name</th>
+    <th>Quantity</th>
+    <th>Date Recorded</th>
+  {% endif %}           
+{% endblock %}
+
+{% block tbodyContent %}
+  {% if not flags %}
+    <h3>No Completed Process</h3>
+    {% else %} 
+      {% for completedProcess in completedProcesses %}
+        <tr>
+          <td><input type="checkbox" name="selected" value="{{ completedProcess.id }}"></td>
+
+          <td scope="row"><a href="{% url 'edit-completedProcess' completedProcess.id %}?next={{ request.path }}">{{ completedProcess.id }}</a></td>
+          <td><a href="{% url 'edit-process' completedProcess.processID|escape|getID %}?next={{ request.path }}">{{ completedProcess.processID }}</a></td>
+          <td>{{ completedProcess.employeeID }}</td>
+          <td>{{ completedProcess.quantity }}</td>
+          <td>{{ completedProcess.dateRecorded  }}</td>
+          
+        </tr>
+      {% endfor %} 
+  {% endif %}
+{% endblock %}
+
+
