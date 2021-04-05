@@ -33,9 +33,10 @@
         <td><input type="checkbox" name="selected" value="{{ employee.id }}" id="enableDeleteBtn"></td>
 
         <td scope="row"><a href="{% url 'edit-employee' employee.id %}">{{ employee.id }}</a></td>
-        <td>{{ employee.firstName}} {% if employee.lastName %}{{ employee.lastName }}{% endif %}</td>
+        <td>{{ employee.firstName|capfirst }} {% if employee.lastName %}{{ employee.lastName|capfirst }}{% endif %}</td>
         <!-- <td>{{ order.name }}</td> -->
-        <td>{{ employee.positionID }}</td>
+        <td>{{ employee.positionID }}</td> 
+        <!-- {% comment %}{% if not employee.positionID %}Others{% endif %} {% endcomment %} -->
         <td>{{ employee.employmentTypeID }}</td>
         <td>{{ employee.hireDate }}</td>
         <td>{{ employee.notes|slice:"0:37" }}{% if employee.notes|length > 37 %}...{% endif %}</td>

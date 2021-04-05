@@ -1,6 +1,7 @@
 from django import forms
 
-from .models import Order, Process, Employee, Position, EmploymentType
+
+from .models import Order, Process, Employee, Position, EmploymentType, CompletedProcess
 from django import forms
 
 class OrderForm(forms.ModelForm):
@@ -17,11 +18,12 @@ class OrderForm(forms.ModelForm):
     ]
 
 class ProcessForm(forms.ModelForm):
+  orderID     = forms.ModelChoiceField(queryset=Order.objects.all().order_by('-id'),label='Order Code')
   class Meta:
     model = Process
     fields = [
       'id',
-      'orderId',
+      'orderID',
       'name',
       'price',
       'quantity',
@@ -84,4 +86,20 @@ class EmploymentTypeForm(forms.ModelForm):
       'id',
       'name',
       'description'
+    ]
+
+class CompletedProcessForm(forms.ModelForm):
+  processID = forms.ModelChoiceField(
+    queryset=Process.objects.all().order_by('-id'), 
+    label='Process ID', required=True, 
+    # widget=forms.AutocompleteSelectWidget()
+    )
+  employeeID = forms.ModelChoiceField(queryset=Employee.objects.all(),label='Employee ID', required=True)
+
+  class Meta:
+    model = CompletedProcess
+    fields = [
+      'processID',
+      'employeeID',
+      'quantity'
     ]
