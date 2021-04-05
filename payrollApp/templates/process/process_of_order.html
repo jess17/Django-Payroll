@@ -34,7 +34,7 @@
           <td><input type="checkbox" name="selected" value="{{ process.id }}"></td>
 
           <td scope="row"><a href="{% url 'edit-process' process.id %}?next={{ request.path }}">{{ process.id }}</a></td>
-          <td>{{ process.orderId }}</td>
+          <td>{{ process.orderID }}</td>
           <td>{{ process.name }}</td>
           <td>{{ process.price }}</td>
           <td>{{ process.quantity }}</td>

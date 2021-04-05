@@ -8,6 +8,7 @@
   <a href="{% url 'create-completedProcess' process.id %}?next={{ request.path }}" class="btn btn-info">Add Completed Process</a>
 {% endblock %}
 
+{% load customtags %}
 
 {% block columns %}
   {% if flags %}
@@ -33,7 +34,7 @@
           <td><input type="checkbox" name="selected" value="{{ completedProcess.id }}"></td>
 
           <td scope="row"><a href="{% url 'edit-completedProcess' completedProcess.id %}?next={{ request.path }}">{{ completedProcess.id }}</a></td>
-          <td>{{ completedProcess.processID }}</td>
+          <td><a href="{% url 'edit-process' completedProcess.processID|escape|getID %}?next={{ request.path }}">{{ completedProcess.processID }}</a></td>
           <td>{{ completedProcess.employeeID }}</td>
           <td>{{ completedProcess.quantity }}</td>
           <td>{{ completedProcess.dateRecorded  }}</td>

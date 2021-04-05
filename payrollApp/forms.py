@@ -18,12 +18,12 @@ class OrderForm(forms.ModelForm):
     ]
 
 class ProcessForm(forms.ModelForm):
-  orderId     = forms.ModelChoiceField(queryset=Order.objects.all().order_by('-id'),label='Order Code')
+  orderID     = forms.ModelChoiceField(queryset=Order.objects.all().order_by('-id'),label='Order Code')
   class Meta:
     model = Process
     fields = [
       'id',
-      'orderId',
+      'orderID',
       'name',
       'price',
       'quantity',
@@ -89,7 +89,11 @@ class EmploymentTypeForm(forms.ModelForm):
     ]
 
 class CompletedProcessForm(forms.ModelForm):
-  processID = forms.ModelChoiceField(queryset=Process.objects.all().order_by('-id'),label='Process ID', required=True)
+  processID = forms.ModelChoiceField(
+    queryset=Process.objects.all().order_by('-id'), 
+    label='Process ID', required=True, 
+    # widget=forms.AutocompleteSelectWidget()
+    )
   employeeID = forms.ModelChoiceField(queryset=Employee.objects.all(),label='Employee ID', required=True)
 
   class Meta:

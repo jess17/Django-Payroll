@@ -88,7 +88,7 @@ def process_view(request):
 
 def process_of_order_view(request, order_id):
   order = Order.objects.get(id=order_id)
-  processes = Process.objects.filter(orderId=order_id)
+  processes = Process.objects.filter(orderID=order_id)
   print(request)
   # processes = Process.objects.get(id=order_id)
   if processes:
@@ -105,7 +105,7 @@ def process_of_order_view(request, order_id):
   return render(request, "process/process_of_order.html", context)
 
 # def process_of_order_view(request, order_code):
-#   processes = Process.objects.filter(orderId=order_code)
+#   processes = Process.objects.filter(orderID=order_code)
 #   # processes = Process.objects.get(id=order_id)
 #   if processes:
 #     #There's at least one process
@@ -116,7 +116,7 @@ def process_of_order_view(request, order_id):
 #   context = {
 #     'processes':processes,
 #     'flags':flag,
-#     'orderId':order_id,
+#     'orderID':order_id,
 #   }
 #   return render(request, "process/process_of_order.html", context)
 
@@ -133,8 +133,8 @@ def process_create_view(request):
 
 def process_order_create_view(request, order_id):
   form = ProcessForm(request.POST or None)
-  form.fields['orderId'].initial = order_id
-  form.fields['orderId'].disabled = True
+  form.fields['orderID'].initial = order_id
+  form.fields['orderID'].disabled = True
   order = Order.objects.get(id=order_id)
   form.fields['quantity'].initial = order.quantity
 
@@ -383,7 +383,7 @@ def completedProcess_view(request):
 def completedProcess_of_process_view(request, process_id):
   process = Process.objects.get(id=process_id)
   completedProcesses = CompletedProcess.objects.filter(processID=process_id)
-  print(request)
+  # print(request)
 
   if completedProcesses:
     #There's at least one completedProcess

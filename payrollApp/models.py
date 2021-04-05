@@ -19,7 +19,7 @@ class Order(models.Model):
     return str(self.id)+" | "+self.code
 
 class Process(models.Model):
-  orderId     = models.ForeignKey('Order', default=None, null=True, on_delete=models.SET_DEFAULT)
+  orderID     = models.ForeignKey('Order', default=None, null=True, on_delete=models.SET_DEFAULT)
   name        = models.CharField(max_length=200)
   price       = models.DecimalField(decimal_places=2, max_digits=100, validators=[MinValueValidator(0, message="Price can't be less than 0")])
   quantity    = models.PositiveIntegerField()
