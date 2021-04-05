@@ -95,6 +95,12 @@ class CompletedProcessForm(forms.ModelForm):
     queryset=Process.objects.all().order_by('-id'), 
     label='Process ID', required=True, 
     # widget=forms.AutocompleteSelectWidget()
+    widget=forms.TextInput(
+        attrs={
+            'style': 'width: 400px',
+            'class': 'basicAutoComplete',
+            'data-url': "completedProcess/process-autocomplete/"
+        })
     )
   employeeID = forms.ModelChoiceField(queryset=Employee.objects.all(),label='Employee ID', required=True)
 
@@ -105,9 +111,9 @@ class CompletedProcessForm(forms.ModelForm):
       'employeeID',
       'quantity'
     ]
-    widgets = {
-      'processID': autocomplete.ModelSelect2(url='processID-autocomplete')
-    }
+    # widgets = {
+    #   'processID': autocomplete.ModelSelect2(url='processID-autocomplete')
+    # }
 
 class SalaryForm(forms.ModelForm):
   employeeID = forms.ModelChoiceField(
