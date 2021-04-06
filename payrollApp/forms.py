@@ -1,7 +1,7 @@
 from django import forms
 
 
-from .models import Order, Process, Employee, Position, EmploymentType, CompletedProcess, Salary
+from .models import Order, Process, Employee, Position, EmploymentType, CompletedProcess, DailySalary
 from django import forms
 
 from django.core.exceptions import ValidationError
@@ -59,16 +59,6 @@ class ProcessForm(forms.ModelForm):
       'description',
     ]
 
-  # firstName      = models.CharField(max_length=30)
-  # lastName       = models.CharField(max_length=30, blank=True, null=True)
-  # phoneNumber    = models.CharField(max_length=15, blank=True, null=True)
-  # email          = models.CharField(max_length=100, blank=True, null=True)
-  # address        = models.CharField(max_length=200, blank=True, null=True)
-  # positionID     = models.ForeignKey('Position', default=None, null=True, on_delete=models.SET_DEFAULT)
-  # employmentTypeID = models.ForeignKey('EmploymentType', default=None, null=True, on_delete=models.SET_DEFAULT)
-  # hireDate       = models.DateTimeField(auto_now_add=True)
-  # terminationDate= models.DateTimeField(blank=True, null=True)
-  # notes          = models.TextField(blank=True, null=True)
 class EmployeeForm(forms.ModelForm):
   firstName = forms.CharField(max_length=30,
    label='First Name',
@@ -125,10 +115,6 @@ class CompletedProcessForm(forms.ModelForm):
     )
   employeeID = forms.ModelChoiceField(queryset=Employee.objects.all(),label='Employee ID', required=True)
   
-  # completedProcessesQty = []
-  # completedQty=0
-  # processIDVal=0
-  
 
   class Meta:
     model = CompletedProcess
@@ -138,15 +124,33 @@ class CompletedProcessForm(forms.ModelForm):
       'quantity'
     ]
 
-class SalaryForm(forms.ModelForm):
+class DailySalaryForm(forms.ModelForm):
   employeeID = forms.ModelChoiceField(
     queryset=Employee.objects.all(), 
     label='Employee ID', required=True
   )
+  dailySalary = forms.DecimalField(label='Daily Salary')
+
   class Meta:
-    model = Salary
+    model = DailySalary
     fields = [
       'employeeID',
-      'salary',
+      'dailySalary',
       'notes'
     ]
+
+from functools import partial
+DateInput = partial(forms.DateInput, {'class': 'datepicker'})
+
+class GetDateForm(forms.Form):
+  startDate = forms.DateField(label='From', required=True, widget=DateInput())
+  endDate = forms.DateField(label='To', required=True, widget=DateInput())
+
+  # class Meta:
+  #   model = DailySalary
+  #   fields = [
+  #     'employeeID',
+  #     'dailySalary',
+  #     'notes'
+  #   ]
+

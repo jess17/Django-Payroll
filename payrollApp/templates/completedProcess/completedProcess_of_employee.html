@@ -1,6 +1,7 @@
 {% extends 'view_base.html' %}
 
 {% load static %}
+{% load humanize %}
 
 {% block viewTitle %}Completed Process of {{ employee.firstName|capfirst }} {% if employee.lastName %}{{ employee.lastName|capfirst }}{% endif %}{% endblock %}
 
@@ -35,7 +36,7 @@
           <td scope="row"><a href="{% url 'edit-completedProcess' completedProcess.id %}?next={{ request.path }}">{{ completedProcess.id }}</a></td>
           <td>{{ completedProcess.processID }}</td>
           <!-- <td>{{ completedProcess.employeeID }}</td> -->
-          <td>{{ completedProcess.quantity }}</td>
+          <td>{{ completedProcess.quantity|intcomma }}</td>
           <td>{{ completedProcess.dateRecorded  }}</td>
           
         </tr>

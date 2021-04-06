@@ -102,9 +102,9 @@ class CompletedProcess(models.Model):
   def __str__(self):
     return str(self.processID) + " | " + str(self.employeeID)
 
-class Salary(models.Model):
+class DailySalary(models.Model):
   employeeID    = models.OneToOneField('Employee', on_delete=models.CASCADE, unique=True)
-  salary        = models.DecimalField(decimal_places=2, max_digits=100, validators=[MinValueValidator(0, message="Salary can't be less than 0")])
+  dailySalary   = models.DecimalField(decimal_places=2, max_digits=100, validators=[MinValueValidator(0, message="Daily salary can't be less than 0")])
   notes         = models.TextField(blank=True, null=True)
   lastModified  = models.DateTimeField(auto_now=True)
 
@@ -118,9 +118,10 @@ class Attendance(models.Model):
     (ONTIME, "On time"),
     (LATE, "Late"),
     (ABSENT, "Absent"),
-    (ONLEAVE, "On leave"),
   }
 
   employeeID    = models.ForeignKey('Employee', default=None, null=True, on_delete=models.SET_DEFAULT)
-  dates         = models.DateField()
+  date          = models.DateField()
+  percentage    = models.IntegerField(default=100, validators=[MinValueValidator(0, message="Can't be less than 0"), MaxValueValidator(100, message="Can't be greater than 100")])
   status        = models.IntegerField(choices= STATUS_CHOICES)
+

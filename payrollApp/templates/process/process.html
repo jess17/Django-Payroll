@@ -1,6 +1,8 @@
 {% extends 'view_base.html' %}
 
 {% load static %}
+{% load customtags %}
+{% load humanize %}
 
 {% block viewTitle %}Process{% endblock %}
 
@@ -29,8 +31,6 @@
   {% endif %}
 {% endblock %}
 
-{% load customtags %}
-
 {% block tbodyContent %}
   {% if not flags %}
   <h3>No Process</h3>
@@ -46,8 +46,8 @@
             {{ process.orderID }}
           {% endif %}</td>
         <td>{{ process.name }}</td>
-        <td>{{ process.price }}</td>
-        <td>{{ process.quantity }}</td>
+        <td>{{ process.price|intcomma }}</td>
+        <td>{{ process.quantity|intcomma }}</td>
         <td>{{ process.description|slice:"0:15" }}{% if process.description|length > 15 %}...{% endif %}</td>
       </tr>
     {% endfor %}

@@ -1,16 +1,18 @@
 {% extends 'view_base.html' %}
-{% load customtags %}
 
-{% block viewTitle %}Employee{% endblock %}
+{% load customtags %}
+{% load humanize %}
+
+{% block viewTitle %}Daily Salary{% endblock %}
 {% block addBtn %}
-<a href="{% url 'create-salary' %}" class="btn btn-info">Add Salary</a>
+<a href="{% url 'create-dailySalary' %}" class="btn btn-info">Add Daily Salary</a>
 
 {% endblock %}
 
 {% block columns %}
   {% if flags %}
   {% block form %}
-    <form action="{% url 'delete-salary'%}?next={{ request.path }}" method="POST">{% csrf_token %}
+    <form action="{% url 'delete-dailySalary'%}?next={{ request.path }}" method="POST">{% csrf_token %}
   {% endblock %}
 
     <th></th>
@@ -28,15 +30,15 @@
   {% if not flags %}
   <h3>No Salary Record</h3>
   {% else %}
-    {% for salary  in salaries %}
+    {% for dailySalary  in dailySalaries %}
       <tr>
-        <td><input type="checkbox" name="selected" value="{{ salary.id }}" id="enableDeleteBtn"></td>
+        <td><input type="checkbox" name="selected" value="{{ dailySalary.id }}" id="enableDeleteBtn"></td>
 
-        <td><a href="{% url 'edit-salary' salary.id %}">{{ salary.id }}</a></td>
-        <td><a href="{% url 'edit-employee' salary.employeeID|escape|getID %}?next={{ request.path }}">{{ salary.employeeID }}</a></td>
-        <td>{{ salary.salary }}</td> 
-        <td>{{ salary.notes|slice:"0:37" }}{% if salary.notes|length > 37 %}...{% endif %}</td>
-        <td>{{ salary.lastModified }}</td>
+        <td><a href="{% url 'edit-dailySalary' dailySalary.id %}">{{ dailySalary.id }}</a></td>
+        <td><a href="{% url 'edit-employee' dailySalary.employeeID|escape|getID %}?next={{ request.path }}">{{ dailySalary.employeeID }}</a></td>
+        <td>{{ dailySalary.dailySalary|intcomma }}</td> 
+        <td>{{ dailySalary.notes|slice:"0:37" }}{% if dailySalary.notes|length > 37 %}...{% endif %}</td>
+        <td>{{ dailySalary.lastModified }}</td>
       </tr>
     {% endfor %}
   {% endif %}
