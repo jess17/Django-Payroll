@@ -42,4 +42,9 @@ urlpatterns = [
     path('completedProcess/employee/create/<employee_id>/', views.completedProcess_employee_create_view, name="create-completedProcess-employee"),
     path('completedProcess/edit/<completedProcess_id>/', views.completedProcess_edit_view, name="edit-completedProcess"),
     path('completedProcess/delete/', views.completedProcess_delete_view, name="delete-completedProcess"),
+
+    path('salary/', views.salary_view, name="salary"),
+    path('salary/create/', views.salary_create_view, name="create-salary"),
+    path('salary/edit/<salary_id>/', views.salary_edit_view, name="edit-salary"),
+    path('salary/delete/', views.salary_delete_view, name="delete-salary"),
 ]

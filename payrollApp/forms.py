@@ -1,8 +1,10 @@
 from django import forms
 
 
-from .models import Order, Process, Employee, Position, EmploymentType, CompletedProcess
+from .models import Order, Process, Employee, Position, EmploymentType, CompletedProcess, Salary
 from django import forms
+
+from django.core.exceptions import ValidationError
 
 class OrderForm(forms.ModelForm):
   class Meta:
@@ -18,7 +20,34 @@ class OrderForm(forms.ModelForm):
     ]
 
 class ProcessForm(forms.ModelForm):
+  # Get ID from arg pass in process_edit_view
+  def __init__(self, *args, **kwargs):
+    self._id = kwargs.pop('id', None)
+    super().__init__(*args, **kwargs)
+
   orderID     = forms.ModelChoiceField(queryset=Order.objects.all().order_by('-id'),label='Order Code')
+
+  
+  def clean_quantity(self):
+    processIDVal = self._id
+    completedProcessesQty = CompletedProcess.objects.filter(processID=processIDVal).values('quantity')
+    
+    completedQty = 0
+    for completedProcessQty in completedProcessesQty:
+      completedQty = completedQty + completedProcessQty['quantity']
+    print("Completed quantity: ", completedQty)
+
+    if int(self['quantity'].value())<completedQty:
+        errorMsg = "Quantity is smaller than completed quantity ("+ str(completedQty) + ")"
+        # raise ValidationError(errorMsg)    
+        raise ValidationError(
+          ('Quantity can\'t be smaller than the completed quantity %(completedQty)s'),
+          code='Quantity',
+          params={'completedQty': completedQty},
+        )
+
+    return self['quantity'].value()
+
   class Meta:
     model = Process
     fields = [
@@ -95,6 +124,11 @@ class CompletedProcessForm(forms.ModelForm):
     # widget=forms.AutocompleteSelectWidget()
     )
   employeeID = forms.ModelChoiceField(queryset=Employee.objects.all(),label='Employee ID', required=True)
+  
+  # completedProcessesQty = []
+  # completedQty=0
+  # processIDVal=0
+  
 
   class Meta:
     model = CompletedProcess
@@ -102,4 +136,17 @@ class CompletedProcessForm(forms.ModelForm):
       'processID',
       'employeeID',
       'quantity'
+    ]
+
+class SalaryForm(forms.ModelForm):
+  employeeID = forms.ModelChoiceField(
+    queryset=Employee.objects.all(), 
+    label='Employee ID', required=True
+  )
+  class Meta:
+    model = Salary
+    fields = [
+      'employeeID',
+      'salary',
+      'notes'
     ]

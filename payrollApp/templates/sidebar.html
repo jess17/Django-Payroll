@@ -27,6 +27,7 @@
 {% url 'order' as order_url %}
 {% url 'process' as process_url %}
 {% url 'completedProcess' as completedProcess_url %}
+{% url 'salary' as salary_url %}
 
 
   <div>
@@ -60,7 +61,7 @@
           
           <a href="{% url 'completedProcess' %}" class="list-group-item {% if request.path == completedProcess_url %} active {% endif %}">Completed Process</a>
           
-
+          <a href="{% url 'salary' %}" class="list-group-item {% if request.path == salary_url %} active {% endif %}">Salaries</a>
             
           <a href="#" class="list-group-item {% if request.path == restaurant_report_url %} active {% endif %}">Reports</a>
           

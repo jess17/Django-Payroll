@@ -1,48 +1,44 @@
 {% extends 'view_base.html' %}
+{% load customtags %}
 
-{% block viewTitle %}Order{% endblock %}
-{% block addBtn %}<a href="{% url 'create-order' %}" class="btn btn-info">Add Order</a>{% endblock %}
+{% block viewTitle %}Employee{% endblock %}
+{% block addBtn %}
+<a href="{% url 'create-salary' %}" class="btn btn-info">Add Salary</a>
+
+{% endblock %}
 
 {% block columns %}
   {% if flags %}
-    {% block form %}
-      <form action="{% url 'delete-order'%}?next={{ request.path }}" method="POST">{% csrf_token %}
-    {% endblock %}
+  {% block form %}
+    <form action="{% url 'delete-salary'%}?next={{ request.path }}" method="POST">{% csrf_token %}
+  {% endblock %}
 
     <th></th>
     <th>ID</th>
-    <th>Order Code</th>
-    <th>Order Name</th>
-    <th>Quantity</th>
-    <th>Description</th>
-    <th>Date Created</th>
+    <th>ID | Employee</th>
+    <th>Daily Salary</th>
+    <th>Notes</th>
     <th>Last Modified</th>
-    <th>Action</th>
   {% endif %}
 {% endblock %}
-            
+
+
+
 {% block tbodyContent %}
   {% if not flags %}
-    <h3>No Order</h3>
+  <h3>No Salary Record</h3>
   {% else %}
-
-    {% for order  in orders %}
-
+    {% for salary  in salaries %}
       <tr>
-        <td><input type="checkbox" name="selected" value="{{ order.id }}"></td>
+        <td><input type="checkbox" name="selected" value="{{ salary.id }}" id="enableDeleteBtn"></td>
 
-        <td scope="row"><a href="{% url 'edit-order' order.id %}">{{ order.id }}</a></td>
-        <td>{{ order.code }}</td>
-        <td>{{ order.name }}</td>
-        <td>{{ order.quantity }}</td>
-        <td>{{ order.description|slice:"0:50" }}{% if order.description|length > 50 %}...{% endif %}</td>
-        <td>{{ order.dateCreated }}</td>
-        <td>{{ order.lastModified }}</td>
-        <td><a href="{% url 'process-of-order' order.id%}" class="btn btn-warning">View Process</a></td>
+        <td><a href="{% url 'edit-salary' salary.id %}">{{ salary.id }}</a></td>
+        <td><a href="{% url 'edit-employee' salary.employeeID|escape|getID %}?next={{ request.path }}">{{ salary.employeeID }}</a></td>
+        <td>{{ salary.salary }}</td> 
+        <td>{{ salary.notes|slice:"0:37" }}{% if salary.notes|length > 37 %}...{% endif %}</td>
+        <td>{{ salary.lastModified }}</td>
       </tr>
-
     {% endfor %}
-    
   {% endif %}
 {% endblock %}
         

@@ -1,19 +1,22 @@
 {% extends 'view_base.html' %}
 
 {% load static %}
+{% load customtags %}
 
-{% block viewTitle %}Completed Process of Process {{ process.name|capfirst }}{% endblock %}
+{% block viewTitle %}Completed Process of Process {{ process.name|capfirst }} (Qty:{{ process.quantity }}){% endblock %}
 
 {% block addBtn %}
   <a href="{% url 'create-completedProcess' process.id %}?next={{ request.path }}" class="btn btn-info">Add Completed Process</a>
 {% endblock %}
 
-{% load customtags %}
+
 
 {% block columns %}
+<h3>Total Completed Process Qty: {{ completedQty }} out of {{ process.quantity }}</h3>
   {% if flags %}
     {% block form %}
-      <form action="{% url 'delete-completedProcess'%}" method="POST">{% csrf_token %}
+      
+      <form action="{% url 'delete-completedProcess'%}?next={{ request.path }}" method="POST">{% csrf_token %}
     {% endblock %}
     <th></th>
 
