@@ -1,10 +1,15 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+# from django.http import HttpResponse
+# from django.http import HttpResponseRedirect
 from django.contrib import messages
-from django.core.exceptions import ValidationError
+# from django.core.exceptions import ValidationError
 
-from .models import Order, Process, Employee, EmploymentType, Position, CompletedProcess, Salary
-from .forms import OrderForm, ProcessForm, EmployeeForm, PositionForm, EmploymentTypeForm, CompletedProcessForm, SalaryForm
+
+from django.urls import reverse
+from datetime import date, datetime, timedelta
+
+from .models import Order, Process, Employee, EmploymentType, Position, CompletedProcess, DailySalary
+from .forms import OrderForm, ProcessForm, EmployeeForm, PositionForm, EmploymentTypeForm, CompletedProcessForm, DailySalaryForm, GetDateForm
 # Create your views here.
 def home_view(request):
     return render(request, "real_base.html", {})
@@ -199,17 +204,17 @@ def employee_view(request):
 
 def employee_create_view(request):
   form = EmployeeForm(request.POST or None)
-  positions = Position.objects.all()
-  employmentTypes = EmploymentType.objects.all()
+  # positions = Position.objects.all()
+  # employmentTypes = EmploymentType.objects.all()
 
   if form.is_valid():
     form.save()
-    return redirect(request.GET.get("next"))
+    return redirect(employee_view)
 
   context = {
     'form':form,
-    'positions': positions,
-    'employmentTypes': employmentTypes
+    # 'positions': positions,
+    # 'employmentTypes': employmentTypes
   }
   return render(request, "employee/employee_create.html", context)
 
@@ -440,7 +445,7 @@ def completedProcess_employee_create_view(request, employee_id):
   form = CompletedProcessForm(request.POST or None)
   form.fields['employeeID'].initial = employee_id
   form.fields['employeeID'].disabled = True
-  employee = Employee.objects.get(id=employee_id)
+  # employee = Employee.objects.get(id=employee_id)
   # form.fields['quantity'].initial = process.quantity
 
 
@@ -485,48 +490,134 @@ def completedProcess_delete_view(request, id=None):
 
 
 
-#SALARY RELATED VIEWS
-def salary_view(request):
-  salaries = Salary.objects.all()
+#DAILY SALARY RELATED VIEWS
+def dailySalary_view(request):
+  dailySalaries = DailySalary.objects.all()
   flag   = True
-  if not salaries:
+  if not dailySalaries:
     flag=False
 
   context = {
-    'salaries':salaries,
+    'dailySalaries':dailySalaries,
     'flags':flag
   }
-  return render(request, 'salary/salary.html', context)
+  return render(request, 'salary/dailySalary.html', context)
 
-def salary_create_view(request):
-  form = SalaryForm(request.POST or None)
-  employees = Employee.objects.all()
+def dailySalary_create_view(request):
+  form = DailySalaryForm(request.POST or None)
+  # employees = Employee.objects.all()
 
   if form.is_valid():
     form.save()
+    return redirect(dailySalary_view)
+
+  context = {
+    'form':form,
+    # 'employees': employees,
+  }
+  return render(request, "salary/dailySalary_create.html", context)
+
+def dailySalary_edit_view(request, dailySalary_id):
+  form = DailySalaryForm(instance=DailySalary.objects.get(id=dailySalary_id))
+
+  if request.method == "POST":
+      form = DailySalaryForm(request.POST, request.FILES, instance=DailySalary.objects.get(id=dailySalary_id))
+
+      if form.is_valid():
+          form.save()
+          return redirect(dailySalary_view)
+
+  return render(request, 'salary/dailySalary_edit.html', {
+      "form": form
+  })
+
+def dailySalary_delete_view(request, id=None):
+  delete(request, DailySalary)
+  return  redirect(dailySalary_view)
+
+
+
+
+
+#DAILY SALARY RELATED VIEWS
+class Salary:
+  def __init__(self, employeeID, salary, pieceRate):
+    self.employeeID = employeeID
+    self.salary = salary
+    self.pieceRate = pieceRate
+    self.total = salary+pieceRate
+
+def salary_view(request):
+  start = request.session.get("startDate")
+  end = request.session.get("endDate")
+  # print(start)
+  # print(end)
+
+  # endPlus1 is needed cuz date__range is inclusive
+  endPlus1 = datetime.strptime(end, "%Y-%m-%d")
+  endPlus1 = endPlus1 + timedelta(days=1)
+  completedProcesses = CompletedProcess.objects.filter(dateRecorded__range=[start, endPlus1])
+  employees = Employee.objects.all()
+
+  salaries = []
+  i = 0
+  for employee in employees:
+    # print("Employee", employee)
+    pieceRate = 0
+    currCompletedProcesses = completedProcesses.filter(employeeID=employee.id).values('processID', 'quantity')
+    # print(currCompletedProcesses)
+    for currCompletedProcess in currCompletedProcesses:
+      # print(currCompletedProcess)
+      qty = currCompletedProcess['quantity']
+      processPrice = Process.objects.get(id=currCompletedProcess['processID'])
+      # print("Price", processPrice)
+      pieceRate = pieceRate + (qty*getattr(processPrice, 'price'))
+      # print("Piece rate Payment: ", pieceRate)
+
+    try: 
+      dailySalaryObj = DailySalary.objects.get(employeeID=getattr(employee, 'id'))
+      dailySalary = getattr(dailySalaryObj, 'dailySalary')
+    except:
+      dailySalary = 0
+    
+    salaries.append(Salary(employee, dailySalary, pieceRate))
+    i = i+1
+
+  # print(salaries)
+  flag   = True
+  if not completedProcesses:
+    flag=False
+
+  total = 0
+  for salary in salaries:
+    total = total + salary.total
+
+  context = {
+    'salaries':salaries,
+    'flags':flag,
+    'startDate': start,
+    'endDate': end,
+    'total': total
+  }
+
+  return render(request, 'salary/salaries.html', context)
+
+def inputDate_view(request):
+  endDate = date.today()
+  startDate = endDate - timedelta(days=5)
+  form = GetDateForm(request.POST or None, initial={'endDate': endDate, 'startDate':startDate})
+
+  # print(form)
+  # print("Error: ", form.errors)
+  # print("Non field err: ", form.non_field_errors)
+  if form.is_valid():
+    request.session['startDate'] = form['startDate'].value()
+    request.session['endDate'] = form['endDate'].value()
+
     return redirect(salary_view)
 
   context = {
     'form':form,
-    'employees': employees,
   }
-  return render(request, "salary/salary_create.html", context)
-
-def salary_edit_view(request, salary_id):
-  form = SalaryForm(instance=Salary.objects.get(id=salary_id))
-
-  if request.method == "POST":
-      form = SalaryForm(request.POST, request.FILES, instance=Salary.objects.get(id=salary_id))
-
-      if form.is_valid():
-          form.save()
-          return redirect(salary_view)
-
-  return render(request, 'salary/salary_edit.html', {
-      "form": form
-  })
-
-def salary_delete_view(request, id=None):
-  delete(request, Salary)
-  return  redirect(salary_view)
+  return render(request, "salary/inputDate.html", context)
 

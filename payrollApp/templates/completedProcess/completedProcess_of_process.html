@@ -2,6 +2,7 @@
 
 {% load static %}
 {% load customtags %}
+{% load humanize %}
 
 {% block viewTitle %}Completed Process of Process {{ process.name|capfirst }} (Qty:{{ process.quantity }}){% endblock %}
 
@@ -39,7 +40,7 @@
           <td scope="row"><a href="{% url 'edit-completedProcess' completedProcess.id %}?next={{ request.path }}">{{ completedProcess.id }}</a></td>
           <td><a href="{% url 'edit-process' completedProcess.processID|escape|getID %}?next={{ request.path }}">{{ completedProcess.processID }}</a></td>
           <td>{{ completedProcess.employeeID }}</td>
-          <td>{{ completedProcess.quantity }}</td>
+          <td>{{ completedProcess.quantity|intcomma }}</td>
           <td>{{ completedProcess.dateRecorded  }}</td>
           
         </tr>
