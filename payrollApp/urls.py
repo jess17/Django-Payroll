@@ -48,6 +48,12 @@ urlpatterns = [
     path('dailySalary/edit/<dailySalary_id>/', views.dailySalary_edit_view, name="edit-dailySalary"),
     path('dailySalary/delete/', views.dailySalary_delete_view, name="delete-dailySalary"),
 
-    path('salary/date', views.inputDate_view, name="inputDate-salary"),
+    path('salary/date', views.inputDateSalary_view, name="inputDate-salary"),
     path('salary/', views.salary_view, name="salary"),
+    
+    path('attendance/date', views.inputDateAttendance_view, name="inputDate-attendance"),
+    path('attendance/', views.attendance_view, name="attendance"),
+    path('attendance/create/', views.attendance_create_view, name="create-attendance"),
+    path('attendance/edit/<attendance_id>/', views.attendance_edit_view, name="edit-attendance"),
+    path('attendance/delete/', views.attendance_delete_view, name="delete-attendance"),
 ]

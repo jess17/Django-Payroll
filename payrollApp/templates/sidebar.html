@@ -29,6 +29,9 @@
 {% url 'completedProcess' as completedProcess_url %}
 {% url 'dailySalary' as dailySalary_url %}
 {% url 'inputDate-salary' as inputDateSalary_url %}
+{% url 'inputDate-attendance' as inputDateAttendance_url %}
+{% url 'attendance' as attendance_url %}
+
 
 
   <div>
@@ -65,6 +68,10 @@
           <a href="{% url 'dailySalary' %}" class="list-group-item {% if request.path == dailySalary_url %} active {% endif %}">Daily Salaries</a>
 
           <a href="{% url 'inputDate-salary' %}" class="list-group-item {% if request.path == inputDateSalary_url %} active {% endif %}">Salaries</a>
+
+          <a href="{% url 'attendance' %}" class="list-group-item {% if request.path == attendance_url %} active {% endif %}">View Attendance</a>
+
+          <a href="{% url 'inputDate-attendance' %}" class="list-group-item {% if request.path == inputDateAttendance_url %} active {% endif %}">Input Attendance</a>
             
           <a href="#" class="list-group-item {% if request.path == restaurant_report_url %} active {% endif %}">Reports</a>
           

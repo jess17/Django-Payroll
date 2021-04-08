@@ -55,13 +55,13 @@ class Employee(models.Model):
       return str(self.id)+" | "+self.firstName.capitalize()
 
 class Position(models.Model):
-  name = models.CharField(max_length=60)
+  name = models.CharField(max_length=60, unique=True)
 
   def __str__(self):
     return self.name
 
 class EmploymentType(models.Model):
-  name        = models.CharField(max_length=60)
+  name        = models.CharField(max_length=60, unique=True)
   description = models.TextField(blank=True, null=True)
 
   def __str__(self):
@@ -124,4 +124,7 @@ class Attendance(models.Model):
   date          = models.DateField()
   percentage    = models.IntegerField(default=100, validators=[MinValueValidator(0, message="Can't be less than 0"), MaxValueValidator(100, message="Can't be greater than 100")])
   # status        = models.IntegerField(choices= STATUS_CHOICES)
+
+  class Meta:
+    unique_together = [['employeeID', 'date']]
 
