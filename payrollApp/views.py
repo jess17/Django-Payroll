@@ -562,17 +562,17 @@ def salary_view(request):
   salaries = []
   i = 0
   for employee in employees:
-    print("Employee", employee)
+    # print("Employee", employee)
     pieceRate = 0
     currCompletedProcesses = completedProcesses.filter(employeeID=employee.id).values('processID', 'quantity')
-    print(currCompletedProcesses)
+    # print(currCompletedProcesses)
     for currCompletedProcess in currCompletedProcesses:
-      print(currCompletedProcess)
+      # print(currCompletedProcess)
       qty = currCompletedProcess['quantity']
       processPrice = Process.objects.get(id=currCompletedProcess['processID'])
-      print("Price", processPrice)
+      # print("Price", processPrice)
       pieceRate = pieceRate + (qty*getattr(processPrice, 'price'))
-      print("Piece rate Payment: ", pieceRate)
+      # print("Piece rate Payment: ", pieceRate)
 
     try: 
       dailySalaryObj = DailySalary.objects.get(employeeID=getattr(employee, 'id'))
@@ -583,7 +583,7 @@ def salary_view(request):
     salaries.append(Salary(employee, dailySalary, pieceRate))
     i = i+1
 
-  print(salaries)
+  # print(salaries)
   flag   = True
   if not completedProcesses:
     flag=False

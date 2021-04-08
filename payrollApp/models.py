@@ -109,19 +109,19 @@ class DailySalary(models.Model):
   lastModified  = models.DateTimeField(auto_now=True)
 
 class Attendance(models.Model):
-  ONTIME = 1
-  LATE = 2
-  ABSENT = 3
-  ONLEAVE = 4
+  # ONTIME = 1
+  # LATE = 2
+  # ABSENT = 3
+  # ONLEAVE = 4
 
-  STATUS_CHOICES = {
-    (ONTIME, "On time"),
-    (LATE, "Late"),
-    (ABSENT, "Absent"),
-  }
+  # STATUS_CHOICES = {
+  #   (ONTIME, "On time"),
+  #   (LATE, "Late"),
+  #   (ABSENT, "Absent"),
+  # }
 
   employeeID    = models.ForeignKey('Employee', default=None, null=True, on_delete=models.SET_DEFAULT)
   date          = models.DateField()
   percentage    = models.IntegerField(default=100, validators=[MinValueValidator(0, message="Can't be less than 0"), MaxValueValidator(100, message="Can't be greater than 100")])
-  status        = models.IntegerField(choices= STATUS_CHOICES)
+  # status        = models.IntegerField(choices= STATUS_CHOICES)
 
