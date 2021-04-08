@@ -1,0 +1,42 @@
+{% extends 'real_base.html' %}
+
+{% load bootstrap4 %}
+
+{% block script %}
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css"> 
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+<script>
+$(document).ready(function() {
+    $('.datepicker').datepicker({dateFormat: 'yy-mm-dd', maxDate:'0'});
+
+});
+</script>
+{% endblock %}
+
+{% block page %}
+  <div class="col-lg-12">
+    <div class="card">
+      <div class="card-header bg-blue">
+        <h4 class="card-title text-center text-white">
+          Input Attendance Record for {{ employee.firstName|capfirst }} {% if employee.lastName %}{{ employee.lastName|capfirst }}{% endif %}
+        </h4>
+      </div>
+      <div class="card-body">
+        <form method="POST" enctype="multipart/form-data" autocomplete="off">
+          {% csrf_token %}
+          {{ formset.management_form }}
+          {% for form in formset %}
+
+              {% bootstrap_form form %}
+
+            <!-- {{ form }} -->
+            <hr>
+          {% endfor %}
+          <button type="submit" class="btn btn-success">Add Attendance Record</button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+{% endblock %}

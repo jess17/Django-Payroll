@@ -1,7 +1,7 @@
 from django import forms
 
 
-from .models import Order, Process, Employee, Position, EmploymentType, CompletedProcess, DailySalary
+from .models import Order, Process, Employee, Position, EmploymentType, CompletedProcess, DailySalary, Attendance
 from django import forms
 
 from django.core.exceptions import ValidationError
@@ -144,13 +144,29 @@ DateInput = partial(forms.DateInput, {'class': 'datepicker'})
 
 class GetDateForm(forms.Form):
   startDate = forms.DateField(label='From', required=True, widget=DateInput())
-  endDate = forms.DateField(label='To', required=True, widget=DateInput())
+  endDate   = forms.DateField(label='To', required=True, widget=DateInput())
+  
+  def clean(self):
+    cleaned_data = super().clean()
+    startDate = cleaned_data.get("startDate")
+    endDate = cleaned_data.get("endDate")
+    if endDate < startDate:
+        raise forms.ValidationError("End date should be greater than start date")
 
-  # class Meta:
-  #   model = DailySalary
-  #   fields = [
-  #     'employeeID',
-  #     'dailySalary',
-  #     'notes'
-  #   ]
+class AttendanceForm(forms.ModelForm):
+  employeeID  = forms.ModelChoiceField(queryset=Employee.objects.all().order_by('-id'), label='Employee', required=True)
+  date   = forms.DateField(label='Date', required=True, widget=DateInput())
+  
+  class Meta:
+    model = Attendance
+    fields = [
+      'employeeID',
+      'date',
+      'percentage'
+    ]
+
+class ChooseEmployeeForm(forms.Form):
+  employeeID  = forms.ModelChoiceField(queryset=Employee.objects.all().order_by('-id'), label='Employee', required=True)
+
+
 

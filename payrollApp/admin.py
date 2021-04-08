@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Order, Employee, Process, Position, EmploymentType, CompletedProcess
+from .models import Order, Employee, Process, Position, EmploymentType, CompletedProcess, DailySalary, Attendance
 # Register your models here.
 # admin.site.register(Order)
 # admin.site.register(Employee)
@@ -46,6 +46,15 @@ class PositionAdmin(admin.ModelAdmin):
 class EmploymentTypeAdmin(admin.ModelAdmin):
   search_fields = ['name']
 
+class DailySalaryAdmin(admin.ModelAdmin):
+  search_fields = ['employeeID__firstName', 'employeeID__lastName']
+  list_display = ('employeeID', 'dailySalary', 'lastModified')
+
+class AttendanceAdmin(admin.ModelAdmin):
+  search_fields = ['employeeID__firstName', 'employeeID__lastName']
+  list_filter = ('date', EmployeeFilter)
+  list_display = ('employeeID', 'date', 'percentage')
+
 # Register your models here.
 admin.site.register(CompletedProcess, CompletedProcessAdmin)
 admin.site.register(Employee, EmployeeAdmin)
@@ -53,3 +62,5 @@ admin.site.register(Process, ProcessAdmin)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(Position, PositionAdmin)
 admin.site.register(EmploymentType, PositionAdmin)
+admin.site.register(DailySalary, DailySalaryAdmin)
+admin.site.register(Attendance, AttendanceAdmin)

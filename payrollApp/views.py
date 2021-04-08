@@ -5,11 +5,13 @@ from django.contrib import messages
 # from django.core.exceptions import ValidationError
 
 
-from django.urls import reverse
+# from django.urls import reverse
 from datetime import date, datetime, timedelta
+from django.forms import inlineformset_factory
+from django.forms import formset_factory
 
-from .models import Order, Process, Employee, EmploymentType, Position, CompletedProcess, DailySalary
-from .forms import OrderForm, ProcessForm, EmployeeForm, PositionForm, EmploymentTypeForm, CompletedProcessForm, DailySalaryForm, GetDateForm
+from .models import Order, Process, Employee, EmploymentType, Position, CompletedProcess, DailySalary, Attendance
+from .forms import OrderForm, ProcessForm, EmployeeForm, PositionForm, EmploymentTypeForm, CompletedProcessForm, DailySalaryForm, GetDateForm, AttendanceForm, ChooseEmployeeForm
 # Create your views here.
 def home_view(request):
     return render(request, "real_base.html", {})
@@ -21,7 +23,7 @@ def delete(request, Object):
   for i in idList:
     Object.objects.get(id=i).delete()
   if idList:
-    messages.success(request, "Selected rows has been successfully deleted")
+    messages.success(request, "Selected rows has been deleted successfully")
   else:
     messages.info(request, "Nothing is selected")
 
@@ -65,7 +67,7 @@ def order_edit_view(request, order_id):
         "form": form
     })
 
-def order_delete_view(request, id=None):
+def order_delete_view(request):
   delete(request, Order)
   return redirect(request.GET.get("next"))
 
@@ -179,7 +181,7 @@ def process_edit_view(request, process_id):
       "form": form,
   })
 
-def process_delete_view(request, id=None):
+def process_delete_view(request):
   delete(request, Process)
   return redirect(request.GET.get("next"))
 
@@ -232,7 +234,7 @@ def employee_edit_view(request, employee_id):
         "form": form
     })
 
-def employee_delete_view(request, id=None):
+def employee_delete_view(request):
   delete(request, Employee)
   return redirect(employee_view)
 
@@ -284,7 +286,7 @@ def position_edit_view(request, position_id):
         "form": form
     })
 
-def position_delete_view(request, id=None):
+def position_delete_view(request):
   delete(request, Position)
   return redirect(position_view)
 
@@ -336,7 +338,7 @@ def employmentType_edit_view(request, employmentType_id):
         "form": form
     })
 
-def employmentType_delete_view(request, id=None):
+def employmentType_delete_view(request):
   delete(request, EmploymentType)
   return redirect(employmentType_view)
 
@@ -475,7 +477,7 @@ def completedProcess_edit_view(request, completedProcess_id):
         "form": form
     })
 
-def completedProcess_delete_view(request, id=None):
+def completedProcess_delete_view(request):
   delete(request, CompletedProcess)
   return redirect(request.GET.get("next"))
 
@@ -531,7 +533,7 @@ def dailySalary_edit_view(request, dailySalary_id):
       "form": form
   })
 
-def dailySalary_delete_view(request, id=None):
+def dailySalary_delete_view(request):
   delete(request, DailySalary)
   return  redirect(dailySalary_view)
 
@@ -539,7 +541,17 @@ def dailySalary_delete_view(request, id=None):
 
 
 
-#DAILY SALARY RELATED VIEWS
+
+
+
+
+
+
+
+
+
+
+#SALARY RELATED VIEWS
 class Salary:
   def __init__(self, employeeID, salary, pieceRate):
     self.employeeID = employeeID
@@ -592,6 +604,10 @@ def salary_view(request):
   for salary in salaries:
     total = total + salary.total
 
+  # Del the session creates an error when the page is refreshed
+  # del request.session['startDate']
+  # del request.session['endDate']
+
   context = {
     'salaries':salaries,
     'flags':flag,
@@ -602,7 +618,7 @@ def salary_view(request):
 
   return render(request, 'salary/salaries.html', context)
 
-def inputDate_view(request):
+def inputDateSalary_view(request):
   endDate = date.today()
   startDate = endDate - timedelta(days=5)
   form = GetDateForm(request.POST or None, initial={'endDate': endDate, 'startDate':startDate})
@@ -621,3 +637,125 @@ def inputDate_view(request):
   }
   return render(request, "salary/inputDate.html", context)
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#ATTENDANCE RELATED VIEWS
+def attendance_view(request):
+  attendances = Attendance.objects.all()
+  flag   = True
+  if not attendances:
+    flag=False
+
+  context = {
+    'attendances':attendances,
+    'flags':flag
+  }
+  return render(request, 'attendance/attendance.html', context)
+
+def attendance_create_view(request):
+  employee_id = request.session.get("employee")
+  start = request.session.get("startDate")
+  end = request.session.get("endDate")
+
+  start = datetime.strptime(start, "%Y-%m-%d")
+  end = datetime.strptime(end, "%Y-%m-%d")
+  
+  delta = end-start
+  # print("How many days?", delta.days)
+  dateList = []
+  days = delta.days+1
+  for i in range(delta.days+1):
+    dateList.append(start)
+    start = start + timedelta(days=1)
+
+
+  AttendanceFormSet = inlineformset_factory(Employee, Attendance, form=AttendanceForm, fields=("date", "percentage"), extra=days)
+  # AttendanceFormSet = formset_factory(AttendanceForm, extra=delta.days+1, initial=[{'date':x} for x in dateList])
+
+  employee = Employee.objects.get(id=employee_id)
+  formset = AttendanceFormSet(queryset=Attendance.objects.none(), instance=employee, initial=[{'date':x} for x in dateList])
+  # form = AttendanceForm(initial={'employeeID':employee})
+  # employees = Employee.objects.all()
+
+  if request.method == 'POST':
+    # form = AttendanceForm(request.POST)
+    formset = AttendanceFormSet(request.POST, instance=employee, initial=[{'date':x} for x in dateList])
+    if formset.is_valid():
+      formset.save()
+      return redirect(attendance_view)
+
+  context = {
+    'formset':formset,
+    'employee':employee,
+  }
+  return render(request, "attendance/attendance_create.html", context)
+
+def edit(request, object_id, Form, Object, redirectVal, returnLoc):
+  form = Form(instance=Object.objects.get(id=object_id))
+
+  if request.method == "POST":
+      form = Form(request.POST, request.FILES, instance=Object.objects.get(id=object_id))
+
+      if form.is_valid():
+          form.save()
+          return redirectVal
+  return render(request, returnLoc, {
+      "form": form
+  })
+
+def attendance_edit_view(request, attendance_id):
+  return edit(request, attendance_id, AttendanceForm, Attendance, redirect(attendance_view), 'attendance/attendance_edit.html')
+  # form = DailySalaryForm(instance=DailySalary.objects.get(id=attendance_id))
+
+  # if request.method == "POST":
+  #     form = DailySalaryForm(request.POST, request.FILES, instance=DailySalary.objects.get(id=attendance_id))
+
+  #     if form.is_valid():
+  #         form.save()
+  #         return redirect(attendance_view)
+
+  # return render(request, 'attendance/attendance_edit.html', {
+  #     "form": form
+  # })
+
+def attendance_delete_view(request):
+  delete(request, Attendance)
+  return  redirect(attendance_view)
+
+def inputDateAttendance_view(request):
+  form1 = ChooseEmployeeForm(request.POST or None)
+  endDate = date.today()
+  startDate = endDate - timedelta(days=5)
+  form2 = GetDateForm(request.POST or None, initial={'endDate': endDate, 'startDate':startDate})
+
+  # print(form)
+  # print("Error: ", form.errors)
+  # print("Non field err: ", form.non_field_errors)
+  if form1.is_valid() and form2.is_valid():
+    request.session['employee'] = form1['employeeID'].value()
+    request.session['startDate'] = form2['startDate'].value()
+    request.session['endDate'] = form2['endDate'].value()
+
+    return redirect(attendance_create_view)
+
+  context = {
+    'form1':form1,
+    'form2':form2
+  }
+  return render(request, "attendance/inputDate.html", context)
