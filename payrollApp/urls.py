@@ -42,4 +42,12 @@ urlpatterns = [
     path('completedProcess/employee/create/<employee_id>/', views.completedProcess_employee_create_view, name="create-completedProcess-employee"),
     path('completedProcess/edit/<completedProcess_id>/', views.completedProcess_edit_view, name="edit-completedProcess"),
     path('completedProcess/delete/', views.completedProcess_delete_view, name="delete-completedProcess"),
+
+    path('dailySalary/', views.dailySalary_view, name="dailySalary"),
+    path('dailySalary/create/', views.dailySalary_create_view, name="create-dailySalary"),
+    path('dailySalary/edit/<dailySalary_id>/', views.dailySalary_edit_view, name="edit-dailySalary"),
+    path('dailySalary/delete/', views.dailySalary_delete_view, name="delete-dailySalary"),
+
+    path('salary/date', views.inputDate_view, name="inputDate-salary"),
+    path('salary/', views.salary_view, name="salary"),
 ]

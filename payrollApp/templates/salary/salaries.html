@@ -1,0 +1,55 @@
+{% extends 'real_base.html' %}
+
+{% load static %}
+{% load customtags %}
+{% load humanize %}
+
+{% block script %}
+<link rel="stylesheet" href="{% static 'css/tableStyle.css' %}">
+{% endblock %}
+
+{% block page %}
+
+  <div class="card">
+    <div class="card-header bg-blue">
+      <h4 class="card-title text-center text-white">Salary of {{ startDate }} to {{ endDate }}</h4>
+    </div>
+    <div class="card-body">
+      <table class="table table-bordered table-hover table-striped">
+        <thead>
+          <tr class="bg-gray">
+            <!-- <h3>Salary of {{ startDate }} to {{ endDate }}</h3> -->
+              {% if flags %}
+                <th>ID | Employee</th>
+                <th>Salary</th>
+                <th>Piece rate payment</th>
+                <th>Allowance</th>
+                <th>Deduction</th>
+                <th>Total</th>
+              {% endif %}
+          </tr>
+      </thead>
+      <tbody>
+        {% if not flags %}
+          <h3>No Salary Record in this date</h3>
+          {% else %}
+            {% for salary  in salaries %}
+              <tr>
+                <td>{{ salary.employeeID }}</td>
+                <td>{{ salary.salary|intcomma }}</td> 
+                <td>{{ salary.pieceRate|intcomma }}</td>
+                <td></td>
+                <td></td>
+                <td>{{ salary.total|intcomma }}</td>
+              </tr>
+            {% endfor %}
+          {% endif %}
+      </tbody>
+      </table>
+      <h3>Total = {{ total|intcomma }}</h3>
+    </div>
+  </div>
+  
+{% endblock %}
+
+ 

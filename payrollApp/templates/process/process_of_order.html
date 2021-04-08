@@ -1,6 +1,8 @@
 {% extends 'view_base.html' %}
 
 {% load static %}
+{% load customtags %}
+{% load humanize %}
 
 {% block viewTitle %}Process of Order {{ order.code|capfirst }}{% endblock %}
 
@@ -8,12 +10,11 @@
   <a href="{% url 'create-process' order.id%}?next={{ request.path }}" class="btn btn-info">Add Process</a>
 {% endblock %}
 
-{% load customtags %}
 
 {% block columns %}
   {% if flags %}
     {% block form %}
-      <form action="{% url 'delete-process'%}" method="POST">{% csrf_token %}
+      <form action="{% url 'delete-process'%}?next={{ request.path }}" method="POST">{% csrf_token %}
     {% endblock %}
     <th></th>
 
@@ -37,8 +38,8 @@
           <td scope="row"><a href="{% url 'edit-process' process.id %}?next={{ request.path }}">{{ process.id }}</a></td>
           <td><a href="{% url 'edit-order' process.orderID|escape|getID %}?next={{ request.path }}">{{ process.orderID }}</a></td>
           <td>{{ process.name }}</td>
-          <td>{{ process.price }}</td>
-          <td>{{ process.quantity }}</td>
+          <td>{{ process.price|intcomma }}</td>
+          <td>{{ process.quantity|intcomma }}</td>
           <td>{{ process.description }}</td>
           </td>
         </tr>

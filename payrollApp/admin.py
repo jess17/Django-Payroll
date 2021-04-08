@@ -5,8 +5,8 @@ from .models import Order, Employee, Process, Position, EmploymentType, Complete
 # admin.site.register(Order)
 # admin.site.register(Employee)
 # admin.site.register(Process)
-admin.site.register(Position)
-admin.site.register(EmploymentType)
+# admin.site.register(Position)
+# admin.site.register(EmploymentType)
 # admin.site.register(CompletedProcess)
 
 from admin_auto_filters.filters import AutocompleteFilter
@@ -19,11 +19,11 @@ class OrderFilter(AutocompleteFilter):
   field_name = 'orderID' # name of the foreign key field
 
 class OrderAdmin(admin.ModelAdmin):
-  search_fields = ['code']
+  search_fields = ['code', 'name']
   list_display = ('id', 'code', 'name', 'quantity')
 
 class EmployeeAdmin(admin.ModelAdmin):
-  search_fields = ['firstName'] # this is required for django's autocomplete functionality
+  search_fields = ['firstName', 'lastName'] # this is required for django's autocomplete functionality
   list_display = ('id', 'firstName', 'lastName', 'positionID', 'employmentTypeID', 'hireDate')
 
 class ProcessFilter(AutocompleteFilter):
@@ -32,15 +32,24 @@ class ProcessFilter(AutocompleteFilter):
 
 class ProcessAdmin(admin.ModelAdmin):
   list_filter = (OrderFilter, )
-  search_fields = ['name'] 
+  search_fields = ['name', 'orderID__code', 'orderID__name'] 
   list_display = ('id', 'orderID', 'name', 'quantity')
 
 class CompletedProcessAdmin(admin.ModelAdmin):
   list_filter = (EmployeeFilter, ProcessFilter)
+  search_fields = ['processID__name', 'employeeID__firstName']
   list_display = ('processID', 'employeeID', 'quantity')
+
+class PositionAdmin(admin.ModelAdmin):
+  search_fields = ['name']
+
+class EmploymentTypeAdmin(admin.ModelAdmin):
+  search_fields = ['name']
 
 # Register your models here.
 admin.site.register(CompletedProcess, CompletedProcessAdmin)
 admin.site.register(Employee, EmployeeAdmin)
 admin.site.register(Process, ProcessAdmin)
 admin.site.register(Order, OrderAdmin)
+admin.site.register(Position, PositionAdmin)
+admin.site.register(EmploymentType, PositionAdmin)

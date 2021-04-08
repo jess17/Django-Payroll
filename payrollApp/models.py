@@ -49,7 +49,10 @@ class Employee(models.Model):
   notes          = models.TextField(blank=True, null=True)
 
   def __str__(self):
-    return str(self.id)+" | "+self.firstName
+    if self.lastName:
+      return str(self.id)+" | "+self.firstName.capitalize()+" "+self.lastName.capitalize()
+    else:
+      return str(self.id)+" | "+self.firstName.capitalize()
 
 class Position(models.Model):
   name = models.CharField(max_length=60)
@@ -89,10 +92,6 @@ class CompletedProcess(models.Model):
     else:
       maxVal = processQty
     
-      # print("Self quantity: ", self.quantity)
-      # maxVal = maxVal + selfQty
-    
-    # quantity      = models.PositiveIntegerField(validators=[MaxValueValidator(maxVal, message="Quantity can't be greater than"+str(maxVal))])
     if self.quantity > maxVal:
       # print("Sth is wrong")
       errMsg = "Quantity can't be greater than " + str(maxVal)
@@ -103,4 +102,26 @@ class CompletedProcess(models.Model):
   def __str__(self):
     return str(self.processID) + " | " + str(self.employeeID)
 
+class DailySalary(models.Model):
+  employeeID    = models.OneToOneField('Employee', on_delete=models.CASCADE, unique=True)
+  dailySalary   = models.DecimalField(decimal_places=2, max_digits=100, validators=[MinValueValidator(0, message="Daily salary can't be less than 0")])
+  notes         = models.TextField(blank=True, null=True)
+  lastModified  = models.DateTimeField(auto_now=True)
+
+class Attendance(models.Model):
+  # ONTIME = 1
+  # LATE = 2
+  # ABSENT = 3
+  # ONLEAVE = 4
+
+  # STATUS_CHOICES = {
+  #   (ONTIME, "On time"),
+  #   (LATE, "Late"),
+  #   (ABSENT, "Absent"),
+  # }
+
+  employeeID    = models.ForeignKey('Employee', default=None, null=True, on_delete=models.SET_DEFAULT)
+  date          = models.DateField()
+  percentage    = models.IntegerField(default=100, validators=[MinValueValidator(0, message="Can't be less than 0"), MaxValueValidator(100, message="Can't be greater than 100")])
+  # status        = models.IntegerField(choices= STATUS_CHOICES)
 

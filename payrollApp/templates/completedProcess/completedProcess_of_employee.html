@@ -1,6 +1,7 @@
 {% extends 'view_base.html' %}
 
 {% load static %}
+{% load humanize %}
 
 {% block viewTitle %}Completed Process of {{ employee.firstName|capfirst }} {% if employee.lastName %}{{ employee.lastName|capfirst }}{% endif %}{% endblock %}
 
@@ -12,7 +13,7 @@
 {% block columns %}
   {% if flags %}
     {% block form %}
-      <form action="{% url 'delete-completedProcess'%}" method="POST">{% csrf_token %}
+      <form action="{% url 'delete-completedProcess'%}?next={{ request.path }}" method="POST">{% csrf_token %}
     {% endblock %}
     <th></th>
 
@@ -35,7 +36,7 @@
           <td scope="row"><a href="{% url 'edit-completedProcess' completedProcess.id %}?next={{ request.path }}">{{ completedProcess.id }}</a></td>
           <td>{{ completedProcess.processID }}</td>
           <!-- <td>{{ completedProcess.employeeID }}</td> -->
-          <td>{{ completedProcess.quantity }}</td>
+          <td>{{ completedProcess.quantity|intcomma }}</td>
           <td>{{ completedProcess.dateRecorded  }}</td>
           
         </tr>

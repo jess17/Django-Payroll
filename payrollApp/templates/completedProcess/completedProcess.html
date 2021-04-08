@@ -1,6 +1,8 @@
 {% extends 'view_base.html' %}
 
 {% load static %}
+{% load customtags %}
+{% load humanize %}
 
 {% block viewTitle %}Completed Process{% endblock %}
 
@@ -16,7 +18,7 @@
 {% block columns %}
   {% if flags %}
     {% block form %}
-      <form action="{% url 'delete-completedProcess'%}" method="POST">{% csrf_token %}
+      <form action="{% url 'delete-completedProcess'%}?next={{ request.path }}" method="POST">{% csrf_token %}
     {% endblock %}
 
     <th></th>
@@ -29,8 +31,6 @@
   {% endif %}
 {% endblock %}
 
-{% load customtags %}
-
 {% block tbodyContent %}
   {% if not flags %}
   <h3>No Completed Process</h3>
@@ -42,7 +42,7 @@
         <td scope="row"><a href="{% url 'edit-completedProcess' completedProcess.id %}?next={{ request.path }}">{{ completedProcess.id }}</a></td>
         <td><a href="{% url 'completedProcess-of-process' completedProcess.processID|escape|getID %}">{{ completedProcess.processID }}</a></td>
         <td><a href="{% url 'completedProcess-of-employee' completedProcess.employeeID|escape|getID %}">{{ completedProcess.employeeID }}</a></td>
-        <td>{{ completedProcess.quantity }}</td>
+        <td>{{ completedProcess.quantity|intcomma }}</td>
         <td>{{ completedProcess.dateRecorded  }}</td>
       </tr>
     {% endfor %}
