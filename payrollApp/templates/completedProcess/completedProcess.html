@@ -4,6 +4,18 @@
 {% load customtags %}
 {% load humanize %}
 
+{% block script %}
+  <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css"> 
+  <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+  <script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+  <script>
+  $(document).ready(function() {
+      $('.datepicker').datepicker({dateFormat: 'yy-mm-dd'});
+
+  });
+  </script>
+{% endblock %}
+
 {% block viewTitle %}Completed Process{% endblock %}
 
 {% block addBtn %}
@@ -13,6 +25,13 @@
     <a href="{% url 'create-process' %}" class="btn btn-info">Add Process</a>
   {% endif %}
 
+{% endblock %}
+
+{% block searchForm %}
+    <form method="GET" style="padding: 8px;">
+      {{ myFilter.form }}
+      <button class="btn btn-primary">Search</button>
+    </form>
 {% endblock %}
 
 {% block columns %}

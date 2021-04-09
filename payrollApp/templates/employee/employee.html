@@ -1,11 +1,30 @@
 {% extends 'view_base.html' %}
 
+{% block script %}
+  <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css"> 
+  <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+  <script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+  <script>
+  $(document).ready(function() {
+      $('.datepicker').datepicker({dateFormat: 'yy-mm-dd'});
+
+  });
+  </script>
+{% endblock %}
+
 {% block viewTitle %}Employee{% endblock %}
 {% block addBtn %}
 <a href="{% url 'create-position' %}?next={{ request.path }}" class="btn btn-info">Add Position</a>
 <a href="{% url 'create-employmentType' %}?next={{ request.path }}" class="btn btn-info">Add Employment Type</a>
 <a href="{% url 'create-employee' %}" class="btn btn-info">Add Employee</a>
 
+{% endblock %}
+
+{% block searchForm %}
+    <form method="GET" style="padding: 8px;">
+      {{ myFilter.form }}
+      <button class="btn btn-primary">Search</button>
+    </form>
 {% endblock %}
 
 {% block columns %}

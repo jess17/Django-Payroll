@@ -7,13 +7,14 @@ from django.contrib import messages
 
 # from django.urls import reverse
 from datetime import date, datetime, timedelta
-from decimal import Decimal
 
 from django.forms import inlineformset_factory
 from django.forms import formset_factory
 
 from .models import Order, Process, Employee, EmploymentType, Position, CompletedProcess, DailySalary, Attendance, Allowance, Deduction
 from .forms import OrderForm, ProcessForm, EmployeeForm, PositionForm, EmploymentTypeForm, CompletedProcessForm, DailySalaryForm, GetDateForm, AttendanceForm, ChooseEmployeeForm, AllowanceForm, DeductionForm
+from .filters import OrderFilter, AllowanceFilter, DeductionFilter, EmployeeFilter, CompletedProcessFilter, ProcessFilter, AttendanceFilter
+
 # Create your views here.
 def home_view(request):
     return render(request, "real_base.html", {})
@@ -59,10 +60,14 @@ def order_view(request):
   flag   = True
   if not orders:
     flag=False
-    
+  
+  myFilter = OrderFilter(request.GET, queryset=orders)
+  orders = myFilter.qs
+
   context = {
     'orders':orders,
-    'flags': flag
+    'flags': flag,
+    'myFilter': myFilter
   }
   return render(request, "order/order.html", context)
 
@@ -109,6 +114,7 @@ def order_delete_view(request):
 #PROCESS RELATED VIEWS
 def process_view(request):
   processes = Process.objects.all().order_by('-id')
+
   flag   = True
   if not processes:
     flag=False
@@ -119,10 +125,14 @@ def process_view(request):
     #Orders is empty
     orderFlag=False
 
+  myFilter = ProcessFilter(request.GET, queryset=processes)
+  processes = myFilter.qs
+
   context = {
     'processes':processes,
     'orderFlag':orderFlag,
     'flags':flag,
+    'myFilter':myFilter
   }
   return render(request, "process/process.html", context)
 
@@ -229,9 +239,13 @@ def employee_view(request):
   if not employees:
     flag=False
 
+  myFilter = EmployeeFilter(request.GET, queryset=employees)
+  employees = myFilter.qs
+
   context = {
     'employees':employees,
-    'flags':flag
+    'flags':flag,
+    'myFilter':myFilter
   }
   return render(request, 'employee/employee.html', context)
 
@@ -382,6 +396,7 @@ def employmentType_delete_view(request):
 #COMPLETED PROCESS RELATED VIEWS
 def completedProcess_view(request):
   completedProcesses = CompletedProcess.objects.all().order_by('-id')
+
   flag   = True
   if not completedProcesses:
     flag=False
@@ -392,10 +407,14 @@ def completedProcess_view(request):
     #Orders is empty
     processFlag=False
 
+  myFilter = CompletedProcessFilter(request.GET, queryset=completedProcesses)
+  completedProcesses = myFilter.qs
+
   context = {
     'completedProcesses':completedProcesses,
     'processFlag':processFlag,
     'flags':flag,
+    'myFilter':myFilter
   }
   return render(request, "completedProcess/completedProcess.html", context)
 
@@ -711,9 +730,13 @@ def attendance_view(request):
   if not attendances:
     flag=False
 
+  myFilter = AttendanceFilter(request.GET, queryset=attendances)
+  attendances = myFilter.qs
+
   context = {
     'attendances':attendances,
-    'flags':flag
+    'flags':flag,
+    'myFilter':myFilter
   }
   return render(request, 'attendance/attendance.html', context)
 
@@ -836,13 +859,18 @@ def attendance_employee_create_view(request, employee_id):
 #ALLOWANCE RELATED VIEWS
 def allowance_view(request):
   allowances = Allowance.objects.all()
+
   flag   = True
   if not allowances:
     flag=False
 
+  myFilter = AllowanceFilter(request.GET, queryset=allowances)
+  allowances = myFilter.qs
+
   context = {
     'allowances':allowances,
-    'flags':flag
+    'flags':flag,
+    'myFilter':myFilter
   }
   return render(request, 'salary/allowance/allowance.html', context)
 
@@ -869,13 +897,18 @@ def allowance_delete_view(request):
 #DEDUCTION RELATED VIEWS
 def deduction_view(request):
   deductions = Deduction.objects.all()
+
   flag   = True
   if not deductions:
     flag=False
 
+  myFilter = DeductionFilter(request.GET, queryset=deductions)
+  deductions = myFilter.qs
+
   context = {
     'deductions':deductions,
-    'flags':flag
+    'flags':flag,
+    'myFilter':myFilter
   }
   return render(request, 'salary/deduction/deduction.html', context)
 

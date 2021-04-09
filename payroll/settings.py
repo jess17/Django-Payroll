@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'payrollApp',
     'admin_auto_filters',
     'django.contrib.humanize',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
