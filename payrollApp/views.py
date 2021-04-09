@@ -541,7 +541,7 @@ def dailySalary_create_view(request):
   return render(request, "salary/dailySalary_create.html", context)
 
 def dailySalary_edit_view(request, dailySalary_id):
-  return edit(request, attendance_id, DailySalaryForm, DailySalary, redirect(dailySalary_view), 'salary/dailySalary_edit.html')
+  return edit(request, dailySalary_id, DailySalaryForm, DailySalary, redirect(dailySalary_view), 'salary/dailySalary_edit.html')
   # form = DailySalaryForm(instance=DailySalary.objects.get(id=dailySalary_id))
 
   # if request.method == "POST":
