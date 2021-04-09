@@ -33,7 +33,7 @@
       <tr>
         <td><input type="checkbox" name="selected" value="{{ order.id }}"></td>
 
-        <td scope="row"><a href="{% url 'edit-order' order.id %}">{{ order.id }}</a></td>
+        <td scope="row"><a href="{% url 'edit-order' order.id %}?next={{ request.path }}">{{ order.id }}</a></td>
         <td>{{ order.code }}</td>
         <td>{{ order.name }}</td>
         <td>{{ order.quantity|intcomma }}</td>

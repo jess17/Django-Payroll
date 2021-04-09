@@ -56,4 +56,7 @@ urlpatterns = [
     path('attendance/create/', views.attendance_create_view, name="create-attendance"),
     path('attendance/edit/<attendance_id>/', views.attendance_edit_view, name="edit-attendance"),
     path('attendance/delete/', views.attendance_delete_view, name="delete-attendance"),
+    path('attendance/employee/<employee_id>/', views.attendance_of_employee_view, name="attendance-of-employee"),
+    path('attendance/employee/create/<employee_id>/', views.attendance_employee_create_view, name="create-attendance-employee"),
+
 ]

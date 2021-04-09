@@ -33,9 +33,9 @@
       <tr>
         <td><input type="checkbox" name="selected" value="{{ attendance.id }}" id="enableDeleteBtn"></td>
 
-        <td><a href="{% url 'edit-attendance' attendance.id %}">{{ attendance.id }}</a></td>
+        <td><a href="{% url 'edit-attendance' attendance.id %}?next={{ request.path }}">{{ attendance.id }}</a></td>
         <td>{{ attendance.date }}</td> 
-        <td>{{ attendance.employeeID }}</td>
+        <td><a href="{% url 'attendance-of-employee' attendance.employeeID|escape|getID %}">{{ attendance.employeeID }}</a></td>
         <td>{{ attendance.percentage }}%</td>
 
       </tr>
