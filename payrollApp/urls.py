@@ -2,9 +2,14 @@ from django.urls import path
 
 from . import views
 
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('', views.home_view, name="home"),
+    # path('login/', views.login_view, name="login"),
+    path('login/', auth_views.LoginView.as_view(template_name='account/login.html'), name="login"),
+    path('logout/', auth_views.LogoutView.as_view(next_page='/'), name = 'logout'),
+    # path('logout/', views.logout_view, name="logout"),
 
     path('order/', views.order_view, name="order"),
     path('order/create/', views.order_create_view, name="create-order"),

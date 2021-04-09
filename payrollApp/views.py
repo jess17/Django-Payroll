@@ -2,6 +2,9 @@ from django.shortcuts import render, redirect
 # from django.http import HttpResponse
 # from django.http import HttpResponseRedirect
 from django.contrib import messages
+
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 # from django.core.exceptions import ValidationError
 
 
@@ -12,10 +15,40 @@ from django.forms import inlineformset_factory
 from django.forms import formset_factory
 
 from .models import Order, Process, Employee, EmploymentType, Position, CompletedProcess, DailySalary, Attendance, Allowance, Deduction
-from .forms import OrderForm, ProcessForm, EmployeeForm, PositionForm, EmploymentTypeForm, CompletedProcessForm, DailySalaryForm, GetDateForm, AttendanceForm, ChooseEmployeeForm, AllowanceForm, DeductionForm
+from .forms import UserForm, OrderForm, ProcessForm, EmployeeForm, PositionForm, EmploymentTypeForm, CompletedProcessForm, DailySalaryForm, GetDateForm, AttendanceForm, ChooseEmployeeForm, AllowanceForm, DeductionForm
 from .filters import OrderFilter, AllowanceFilter, DeductionFilter, EmployeeFilter, CompletedProcessFilter, ProcessFilter, AttendanceFilter
 
 # Create your views here.
+# def login_view(request):
+#   if request.user.is_authenticated:
+#     return redirect(home_view)
+#   else:
+#     form = UserForm()
+#     if request.method == 'POST':
+#       form = UserForm(request.POST)
+
+#       if form.is_valid():
+#         username = form.cleaned_data['username']
+#         password = form.cleaned_data['password']
+#         # username = form['username'].cleaned_data
+#         # password = form['password'].cleaned_data
+
+#         user = authenticate(request, username=username, password=password)
+
+#         if user is not None:
+#           login(request, user)
+#           return redirect(home_view)
+#         else:
+#           messages.info(request, 'Username or password is incorrect')
+
+#     context = {'form':form}
+#     return render(request, 'account/login.html', context)
+
+# def logout_view(request):
+# 	logout(request)
+# 	return redirect('account/login.html')
+
+@login_required(login_url='login')
 def home_view(request):
     return render(request, "real_base.html", {})
 
@@ -55,6 +88,7 @@ def delete(request, Object):
 
 
 #ORDER RELATED VIEWS
+@login_required(login_url='login')
 def order_view(request):
   orders = Order.objects.all().order_by('-lastModified')
   flag   = True
@@ -71,6 +105,7 @@ def order_view(request):
   }
   return render(request, "order/order.html", context)
 
+@login_required(login_url='login')
 def order_create_view(request):
     return create(request, OrderForm, redirect(order_view), 'order/order_create.html')
 
@@ -84,6 +119,7 @@ def order_create_view(request):
   # }
   # return render(request, "order/order_create.html", context)
 
+@login_required(login_url='login')
 def order_edit_view(request, order_id):
   return edit(request, order_id, OrderForm, Order, redirect(request.GET.get("next")), 'order/order_edit.html')
     # form = OrderForm(instance=Order.objects.get(id=order_id))
@@ -100,6 +136,7 @@ def order_edit_view(request, order_id):
     #     "form": form
     # })
 
+@login_required(login_url='login')
 def order_delete_view(request):
   delete(request, Order)
   return redirect(request.GET.get("next"))
@@ -112,6 +149,7 @@ def order_delete_view(request):
 
 
 #PROCESS RELATED VIEWS
+@login_required(login_url='login')
 def process_view(request):
   processes = Process.objects.all().order_by('-id')
 
@@ -136,6 +174,7 @@ def process_view(request):
   }
   return render(request, "process/process.html", context)
 
+@login_required(login_url='login')
 def process_of_order_view(request, order_id):
   order = Order.objects.get(id=order_id)
   processes = Process.objects.filter(orderID=order_id)
@@ -169,6 +208,7 @@ def process_of_order_view(request, order_id):
 #   }
 #   return render(request, "process/process_of_order.html", context)
 
+@login_required(login_url='login')
 def process_create_view(request):
   return create(request, ProcessForm, redirect(request.GET.get("next")), 'process/process_create.html')
 
@@ -182,6 +222,7 @@ def process_create_view(request):
   # }
   # return render(request, "process/process_create.html", context)
 
+@login_required(login_url='login')
 def process_order_create_view(request, order_id):
   form = ProcessForm(request.POST or None)
   form.fields['orderID'].initial = order_id
@@ -199,6 +240,7 @@ def process_order_create_view(request, order_id):
   }
   return render(request, "process/process_create.html", context)
 
+@login_required(login_url='login')
 def process_edit_view(request, process_id):
   return edit(request, process_id, ProcessForm, Process, redirect(request.GET.get("next")), 'process/process_edit.html')
   # form = ProcessForm(instance=Process.objects.get(id=process_id))
@@ -222,6 +264,7 @@ def process_edit_view(request, process_id):
   #     "form": form,
   # })
 
+@login_required(login_url='login')
 def process_delete_view(request):
   delete(request, Process)
   return redirect(request.GET.get("next"))
@@ -233,6 +276,7 @@ def process_delete_view(request):
 
 
 #EMPLOYEE RELATED VIEWS
+@login_required(login_url='login')
 def employee_view(request):
   employees = Employee.objects.all()
   flag   = True
@@ -249,6 +293,7 @@ def employee_view(request):
   }
   return render(request, 'employee/employee.html', context)
 
+@login_required(login_url='login')
 def employee_create_view(request):
   form = EmployeeForm(request.POST or None)
   # positions = Position.objects.all()
@@ -265,6 +310,7 @@ def employee_create_view(request):
   }
   return render(request, "employee/employee_create.html", context)
 
+@login_required(login_url='login')
 def employee_edit_view(request, employee_id):
   return edit(request, employee_id, EmployeeForm, Employee, redirect(request.GET.get("next")), 'employee/employee_edit.html')
   # form = EmployeeForm(instance=Employee.objects.get(id=employee_id))
@@ -280,6 +326,7 @@ def employee_edit_view(request, employee_id):
   #     "form": form
   # })
 
+@login_required(login_url='login')
 def employee_delete_view(request):
   delete(request, Employee)
   return redirect(employee_view)
@@ -295,6 +342,7 @@ def employee_delete_view(request):
 
 
 #POSITION RELATED VIEWS
+@login_required(login_url='login')
 def position_view(request):
   positions = Position.objects.all()
   flag   = True
@@ -307,6 +355,7 @@ def position_view(request):
   }
   return render(request, 'employee/position/position.html', context)
 
+@login_required(login_url='login')
 def position_create_view(request):
   return create(request, PositionForm, redirect(request.GET.get("next")), 'employee/position/position_create.html')
 
@@ -320,6 +369,7 @@ def position_create_view(request):
   # }
   # return render(request, "employee/position/position_create.html", context)
 
+@login_required(login_url='login')
 def position_edit_view(request, position_id):
   return edit(request, position_id, PositionForm, Position, redirect(request.GET.get("next")), 'employee/position/position_edit.html')
 
@@ -336,6 +386,7 @@ def position_edit_view(request, position_id):
     #     "form": form
     # })
 
+@login_required(login_url='login')
 def position_delete_view(request):
   delete(request, Position)
   return redirect(position_view)
@@ -351,6 +402,7 @@ def position_delete_view(request):
 
 
 #EMPLOYMENT TYPE RELATED VIEWS
+@login_required(login_url='login')
 def employmentType_view(request):
   employmentTypes = EmploymentType.objects.all()
   flag   = True
@@ -363,6 +415,7 @@ def employmentType_view(request):
   }
   return render(request, 'employee/employmentType/employmentType.html', context)
 
+@login_required(login_url='login')
 def employmentType_create_view(request):
   return create(request, EmploymentTypeForm, redirect(request.GET.get("next")), 'employee/employmentType/employmentType_create.html')
   # form = EmploymentTypeForm(request.POST or None)
@@ -375,9 +428,11 @@ def employmentType_create_view(request):
   # }
   # return render(request, "employee/employmentType/employmentType_create.html", context)
 
+@login_required(login_url='login')
 def employmentType_edit_view(request, employmentType_id):
   return edit(request, employmentType_id, EmploymentTypeForm, EmploymentType, redirect(request.GET.get("next")), 'employee/employmentType/employmentType_edit.html')
 
+@login_required(login_url='login')
 def employmentType_delete_view(request):
   delete(request, EmploymentType)
   return redirect(employmentType_view)
@@ -394,6 +449,7 @@ def employmentType_delete_view(request):
 
 
 #COMPLETED PROCESS RELATED VIEWS
+@login_required(login_url='login')
 def completedProcess_view(request):
   completedProcesses = CompletedProcess.objects.all().order_by('-id')
 
@@ -418,6 +474,7 @@ def completedProcess_view(request):
   }
   return render(request, "completedProcess/completedProcess.html", context)
 
+@login_required(login_url='login')
 def completedProcess_of_process_view(request, process_id):
   process = Process.objects.get(id=process_id)
   completedProcesses = CompletedProcess.objects.filter(processID=process_id).order_by('-dateRecorded')
@@ -442,6 +499,7 @@ def completedProcess_of_process_view(request, process_id):
   }
   return render(request, "completedProcess/completedProcess_of_process.html", context)
 
+@login_required(login_url='login')
 def completedProcess_of_employee_view(request, employee_id):
   employee = Employee.objects.get(id=employee_id)
   completedProcesses = CompletedProcess.objects.filter(employeeID=employee_id).order_by('-dateRecorded')
@@ -459,6 +517,7 @@ def completedProcess_of_employee_view(request, employee_id):
   }
   return render(request, "completedProcess/completedProcess_of_employee.html", context)
 
+@login_required(login_url='login')
 def completedProcess_create_view(request):
   return create(request, CompletedProcessForm, redirect(request.GET.get("next")), 'completedProcess/completedProcess_create.html')
   # form = CompletedProcessForm(request.POST or None)
@@ -471,6 +530,7 @@ def completedProcess_create_view(request):
   # }
   # return render(request, "completedProcess/completedProcess_create.html", context)
 
+@login_required(login_url='login')
 def completedProcess_process_create_view(request, process_id):
   form = CompletedProcessForm(request.POST or None)
   form.fields['processID'].initial = process_id
@@ -489,6 +549,7 @@ def completedProcess_process_create_view(request, process_id):
   }
   return render(request, "completedProcess/completedProcess_create.html", context)
 
+@login_required(login_url='login')
 def completedProcess_employee_create_view(request, employee_id):
   form = CompletedProcessForm(request.POST or None)
   form.fields['employeeID'].initial = employee_id
@@ -506,6 +567,7 @@ def completedProcess_employee_create_view(request, employee_id):
   }
   return render(request, "completedProcess/completedProcess_create.html", context)
 
+@login_required(login_url='login')
 def completedProcess_edit_view(request, completedProcess_id):
   return edit(request, completedProcess_id, CompletedProcessForm, CompletedProcess, redirect(request.GET.get("next")), 'completedProcess/completedProcess_edit.html')
 
@@ -525,6 +587,7 @@ def completedProcess_edit_view(request, completedProcess_id):
   #     "form": form
   # })
 
+@login_required(login_url='login')
 def completedProcess_delete_view(request):
   delete(request, CompletedProcess)
   return redirect(request.GET.get("next"))
@@ -541,6 +604,7 @@ def completedProcess_delete_view(request):
 
 
 #DAILY SALARY RELATED VIEWS
+@login_required(login_url='login')
 def dailySalary_view(request):
   dailySalaries = DailySalary.objects.all()
   flag   = True
@@ -553,6 +617,7 @@ def dailySalary_view(request):
   }
   return render(request, 'salary/dailySalary.html', context)
 
+@login_required(login_url='login')
 def dailySalary_create_view(request):
   return create(request, DailySalaryForm, redirect(dailySalary_view), 'salary/dailySalary_create.html')
   # form = DailySalaryForm(request.POST or None)
@@ -568,9 +633,11 @@ def dailySalary_create_view(request):
   # }
   # return render(request, "salary/dailySalary_create.html", context)
 
+@login_required(login_url='login')
 def dailySalary_edit_view(request, dailySalary_id):
   return edit(request, dailySalary_id, DailySalaryForm, DailySalary, redirect(dailySalary_view), 'salary/dailySalary_edit.html')
 
+@login_required(login_url='login')
 def dailySalary_delete_view(request):
   delete(request, DailySalary)
   return  redirect(dailySalary_view)
@@ -602,6 +669,7 @@ class Salary:
   def getSalary(self, employeeID):
     return {'salary': self.salary, 'allowance':self.allowance, 'deduction':self.deduction, 'total':self.total}
 
+@login_required(login_url='login')
 def salary_view(request):
   start = request.session.get("startDate")
   end = request.session.get("endDate")
@@ -686,6 +754,7 @@ def salary_view(request):
 
   return render(request, 'salary/salaries.html', context)
 
+@login_required(login_url='login')
 def inputDateSalary_view(request):
   endDate = date.today()
   startDate = endDate - timedelta(days=5)
@@ -724,6 +793,7 @@ def inputDateSalary_view(request):
 
 
 #ATTENDANCE RELATED VIEWS
+@login_required(login_url='login')
 def attendance_view(request):
   attendances = Attendance.objects.all().order_by('-date')
   flag   = True
@@ -740,6 +810,7 @@ def attendance_view(request):
   }
   return render(request, 'attendance/attendance.html', context)
 
+@login_required(login_url='login')
 def attendance_create_view(request):
   employee_id = request.session.get("employee")
   start = request.session.get("startDate")
@@ -778,13 +849,16 @@ def attendance_create_view(request):
   }
   return render(request, "attendance/attendance_create.html", context)
 
+@login_required(login_url='login')
 def attendance_edit_view(request, attendance_id):
   return edit(request, attendance_id, AttendanceForm, Attendance, redirect(request.GET.get("next")), 'attendance/attendance_edit.html')
 
+@login_required(login_url='login')
 def attendance_delete_view(request):
   delete(request, Attendance)
   return  redirect(request.GET.get("next"))
 
+@login_required(login_url='login')
 def inputDateAttendance_view(request):
   form1 = ChooseEmployeeForm(request.POST or None)
   endDate = date.today()
@@ -807,6 +881,7 @@ def inputDateAttendance_view(request):
   }
   return render(request, "attendance/inputDate.html", context)
 
+@login_required(login_url='login')
 def attendance_of_employee_view(request, employee_id):
   employee = Employee.objects.get(id=employee_id)
   attendances = Attendance.objects.filter(employeeID=employee_id)
@@ -824,6 +899,7 @@ def attendance_of_employee_view(request, employee_id):
   }
   return render(request, "attendance/attendance_of_employee.html", context)
 
+@login_required(login_url='login')
 def attendance_employee_create_view(request, employee_id):
   employee = Employee.objects.get(id=employee_id)
   form1 = ChooseEmployeeForm(request.POST or None, initial={'employeeID':employee})

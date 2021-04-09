@@ -3,9 +3,17 @@ from django import forms
 
 from .models import Order, Process, Employee, Position, EmploymentType, CompletedProcess, DailySalary, Attendance
 from .models import Allowance, Deduction
-from django import forms
+
+from django.contrib.auth.models import User
 
 from django.core.exceptions import ValidationError
+
+class UserForm(forms.ModelForm):
+  username = forms.CharField(max_length=100, required=True)
+  password = forms.CharField(widget=forms.PasswordInput())
+  class Meta:
+    model = User
+    fields = {"username", "password"}
 
 class OrderForm(forms.ModelForm):
   class Meta:

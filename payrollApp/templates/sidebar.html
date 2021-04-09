@@ -44,9 +44,9 @@
       <div class="navbar-nav">
         <div class="text-center text-white sidebarHeader">
           <!-- <img src="{{ MEDIA_URL }}{{ request.user.restaurant.logo }}" width="78" height="78" alt="" class="rounded-circle"> -->
-          <br>
-          <br>
-          <h4>Hi, {% comment %} {{ request.user.get_full_name }} {% endcomment %}</h4>
+          <!-- <br>
+          <br> -->
+          <h4>Hi, {{ request.user.username }}</h4>
           <h5 id="restName">{% comment %} {{ request.user.restaurant.name }} {% endcomment %}</h5>
         </div>
     
@@ -75,16 +75,16 @@
           <a href="{% url 'allowance' %}" class="list-group-item {% if request.path == allowance_url %} active {% endif %}">Allowance</a>
           <a href="{% url 'deduction' %}" class="list-group-item {% if request.path == deduction_url %} active {% endif %}">Deduction</a>
             
-          <a href="#" class="list-group-item {% if request.path == restaurant_report_url %} active {% endif %}">Reports</a>
+          <!-- <a href="#" class="list-group-item {% if request.path == restaurant_report_url %} active {% endif %}">Reports</a>
           
     
           <span class="text-uppercase">Profile</span>
-          <a href="#" class="list-group-item {% if request.path == restaurant_account_url %} active {% endif %}">Account</a>
+          <a href="#" class="list-group-item {% if request.path == restaurant_account_url %} active {% endif %}">Account</a> -->
     
         </div>
     
         <div class="text-center m-4">
-          <a href="#" class="btn btn-pink">Logout</a>
+          <a href="{% url 'logout' %}" class="btn btn-pink">Logout</a>
         </div>
       </div>
     </div>
