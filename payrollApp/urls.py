@@ -59,4 +59,13 @@ urlpatterns = [
     path('attendance/employee/<employee_id>/', views.attendance_of_employee_view, name="attendance-of-employee"),
     path('attendance/employee/create/<employee_id>/', views.attendance_employee_create_view, name="create-attendance-employee"),
 
+    path('allowance/', views.allowance_view, name="allowance"),
+    path('allowance/create/', views.allowance_create_view, name="create-allowance"),
+    path('allowance/edit/<allowance_id>/', views.allowance_edit_view, name="edit-allowance"),
+    path('allowance/delete/', views.allowance_delete_view, name="delete-allowance"),
+
+    path('deduction/', views.deduction_view, name="deduction"),
+    path('deduction/create/', views.deduction_create_view, name="create-deduction"),
+    path('deduction/edit/<deduction_id>/', views.deduction_edit_view, name="edit-deduction"),
+    path('deduction/delete/', views.deduction_delete_view, name="delete-deduction"),
 ]

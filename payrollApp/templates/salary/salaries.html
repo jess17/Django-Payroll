@@ -38,8 +38,8 @@
                 <td>{{ salary.employeeID }}</td>
                 <td>{{ salary.salary|intcomma }}</td> 
                 <td>{{ salary.pieceRate|intcomma }}</td>
-                <td></td>
-                <td></td>
+                <td>{{ salary.allowance|intcomma }}</td>
+                <td>{% if salary.deduction > 0 %}-{% endif %}{{ salary.deduction|intcomma }}</td>
                 <td>{{ salary.total|intcomma }}</td>
               </tr>
             {% endfor %}

@@ -7,14 +7,27 @@ from django.contrib import messages
 
 # from django.urls import reverse
 from datetime import date, datetime, timedelta
+from decimal import Decimal
+
 from django.forms import inlineformset_factory
 from django.forms import formset_factory
 
-from .models import Order, Process, Employee, EmploymentType, Position, CompletedProcess, DailySalary, Attendance
-from .forms import OrderForm, ProcessForm, EmployeeForm, PositionForm, EmploymentTypeForm, CompletedProcessForm, DailySalaryForm, GetDateForm, AttendanceForm, ChooseEmployeeForm
+from .models import Order, Process, Employee, EmploymentType, Position, CompletedProcess, DailySalary, Attendance, Allowance, Deduction
+from .forms import OrderForm, ProcessForm, EmployeeForm, PositionForm, EmploymentTypeForm, CompletedProcessForm, DailySalaryForm, GetDateForm, AttendanceForm, ChooseEmployeeForm, AllowanceForm, DeductionForm
 # Create your views here.
 def home_view(request):
     return render(request, "real_base.html", {})
+
+def create(request, Form, redirectVal, returnLoc):
+  form = Form(request.POST or None)
+  if form.is_valid():
+    form.save()
+    return redirectVal
+
+  context = {
+    'form':form
+  }
+  return render(request, returnLoc, context)
 
 def edit(request, object_id, Form, Object, redirectVal, returnLoc):
   form = Form(instance=Object.objects.get(id=object_id))
@@ -54,15 +67,17 @@ def order_view(request):
   return render(request, "order/order.html", context)
 
 def order_create_view(request):
-  form = OrderForm(request.POST or None)
-  if form.is_valid():
-    form.save()
-    return redirect(order_view)
+    return create(request, OrderForm, redirect(order_view), 'order/order_create.html')
 
-  context = {
-    'form':form
-  }
-  return render(request, "order/order_create.html", context)
+  # form = OrderForm(request.POST or None)
+  # if form.is_valid():
+  #   form.save()
+  #   return redirect(order_view)
+
+  # context = {
+  #   'form':form
+  # }
+  # return render(request, "order/order_create.html", context)
 
 def order_edit_view(request, order_id):
   return edit(request, order_id, OrderForm, Order, redirect(request.GET.get("next")), 'order/order_edit.html')
@@ -145,15 +160,17 @@ def process_of_order_view(request, order_id):
 #   return render(request, "process/process_of_order.html", context)
 
 def process_create_view(request):
-  form = ProcessForm(request.POST or None)
-  if form.is_valid():
-    form.save()
-    return redirect(request.GET.get("next"))
+  return create(request, ProcessForm, redirect(request.GET.get("next")), 'process/process_create.html')
 
-  context = {
-    'form':form
-  }
-  return render(request, "process/process_create.html", context)
+  # form = ProcessForm(request.POST or None)
+  # if form.is_valid():
+  #   form.save()
+  #   return redirect(request.GET.get("next"))
+
+  # context = {
+  #   'form':form
+  # }
+  # return render(request, "process/process_create.html", context)
 
 def process_order_create_view(request, order_id):
   form = ProcessForm(request.POST or None)
@@ -277,15 +294,17 @@ def position_view(request):
   return render(request, 'employee/position/position.html', context)
 
 def position_create_view(request):
-  form = PositionForm(request.POST or None)
-  if form.is_valid():
-    form.save()
-    return redirect(request.GET.get("next"))
+  return create(request, PositionForm, redirect(request.GET.get("next")), 'employee/position/position_create.html')
 
-  context = {
-    'form':form
-  }
-  return render(request, "employee/position/position_create.html", context)
+  # form = PositionForm(request.POST or None)
+  # if form.is_valid():
+  #   form.save()
+  #   return redirect(request.GET.get("next"))
+
+  # context = {
+  #   'form':form
+  # }
+  # return render(request, "employee/position/position_create.html", context)
 
 def position_edit_view(request, position_id):
   return edit(request, position_id, PositionForm, Position, redirect(request.GET.get("next")), 'employee/position/position_edit.html')
@@ -331,31 +350,19 @@ def employmentType_view(request):
   return render(request, 'employee/employmentType/employmentType.html', context)
 
 def employmentType_create_view(request):
-  form = EmploymentTypeForm(request.POST or None)
-  if form.is_valid():
-    form.save()
-    return redirect(request.GET.get("next"))
+  return create(request, EmploymentTypeForm, redirect(request.GET.get("next")), 'employee/employmentType/employmentType_create.html')
+  # form = EmploymentTypeForm(request.POST or None)
+  # if form.is_valid():
+  #   form.save()
+  #   return redirect(request.GET.get("next"))
 
-  context = {
-    'form':form
-  }
-  return render(request, "employee/employmentType/employmentType_create.html", context)
+  # context = {
+  #   'form':form
+  # }
+  # return render(request, "employee/employmentType/employmentType_create.html", context)
 
 def employmentType_edit_view(request, employmentType_id):
   return edit(request, employmentType_id, EmploymentTypeForm, EmploymentType, redirect(request.GET.get("next")), 'employee/employmentType/employmentType_edit.html')
-
-  # form = EmploymentTypeForm(instance=EmploymentType.objects.get(id=employmentType_id))
-
-  # if request.method == "POST":
-  #     form = EmploymentTypeForm(request.POST, request.FILES, instance=EmploymentType.objects.get(id=employmentType_id))
-
-  #     if form.is_valid():
-  #         form.save()
-  #         return redirect(request.GET.get("next"))
-
-  # return render(request, 'employee/employmentType/employmentType_edit.html', {
-  #     "form": form
-  # })
 
 def employmentType_delete_view(request):
   delete(request, EmploymentType)
@@ -434,15 +441,16 @@ def completedProcess_of_employee_view(request, employee_id):
   return render(request, "completedProcess/completedProcess_of_employee.html", context)
 
 def completedProcess_create_view(request):
-  form = CompletedProcessForm(request.POST or None)
-  if form.is_valid():
-    form.save()
-    return redirect(request.GET.get("next"))
+  return create(request, CompletedProcessForm, redirect(request.GET.get("next")), 'completedProcess/completedProcess_create.html')
+  # form = CompletedProcessForm(request.POST or None)
+  # if form.is_valid():
+  #   form.save()
+  #   return redirect(request.GET.get("next"))
 
-  context = {
-    'form':form
-  }
-  return render(request, "completedProcess/completedProcess_create.html", context)
+  # context = {
+  #   'form':form
+  # }
+  # return render(request, "completedProcess/completedProcess_create.html", context)
 
 def completedProcess_process_create_view(request, process_id):
   form = CompletedProcessForm(request.POST or None)
@@ -527,33 +535,22 @@ def dailySalary_view(request):
   return render(request, 'salary/dailySalary.html', context)
 
 def dailySalary_create_view(request):
-  form = DailySalaryForm(request.POST or None)
-  # employees = Employee.objects.all()
+  return create(request, DailySalaryForm, redirect(dailySalary_view), 'salary/dailySalary_create.html')
+  # form = DailySalaryForm(request.POST or None)
+  # # employees = Employee.objects.all()
 
-  if form.is_valid():
-    form.save()
-    return redirect(dailySalary_view)
+  # if form.is_valid():
+  #   form.save()
+  #   return redirect(dailySalary_view)
 
-  context = {
-    'form':form,
-    # 'employees': employees,
-  }
-  return render(request, "salary/dailySalary_create.html", context)
+  # context = {
+  #   'form':form,
+  #   # 'employees': employees,
+  # }
+  # return render(request, "salary/dailySalary_create.html", context)
 
 def dailySalary_edit_view(request, dailySalary_id):
   return edit(request, dailySalary_id, DailySalaryForm, DailySalary, redirect(dailySalary_view), 'salary/dailySalary_edit.html')
-  # form = DailySalaryForm(instance=DailySalary.objects.get(id=dailySalary_id))
-
-  # if request.method == "POST":
-  #     form = DailySalaryForm(request.POST, request.FILES, instance=DailySalary.objects.get(id=dailySalary_id))
-
-  #     if form.is_valid():
-  #         form.save()
-  #         return redirect(dailySalary_view)
-
-  # return render(request, 'salary/dailySalary_edit.html', {
-  #     "form": form
-  # })
 
 def dailySalary_delete_view(request):
   delete(request, DailySalary)
@@ -575,11 +572,16 @@ def dailySalary_delete_view(request):
 
 #SALARY RELATED VIEWS
 class Salary:
-  def __init__(self, employeeID, salary, pieceRate):
+  def __init__(self, employeeID, salary, pieceRate, allowance, deduction):
     self.employeeID = employeeID
     self.salary = salary
     self.pieceRate = pieceRate
-    self.total = salary+pieceRate
+    self.allowance = allowance
+    self.deduction = deduction
+    self.total = float(salary)+float(pieceRate)+float(allowance)-float(deduction)
+
+  def getSalary(self, employeeID):
+    return {'salary': self.salary, 'allowance':self.allowance, 'deduction':self.deduction, 'total':self.total}
 
 def salary_view(request):
   start = request.session.get("startDate")
@@ -591,8 +593,11 @@ def salary_view(request):
   endPlus1 = datetime.strptime(end, "%Y-%m-%d")
   endPlus1 = endPlus1 + timedelta(days=1)
   completedProcesses = CompletedProcess.objects.filter(dateRecorded__range=[start, endPlus1])
-  employees = Employee.objects.all()
-
+  employees          = Employee.objects.all()
+  attendance         = Attendance.objects.filter(date__range=[start, endPlus1])
+  allowance          = Allowance.objects.filter(date__range=[start, endPlus1])
+  deduction          = Deduction.objects.filter(date__range=[start, endPlus1])
+  
   salaries = []
   i = 0
   for employee in employees:
@@ -607,14 +612,36 @@ def salary_view(request):
       # print("Price", processPrice)
       pieceRate = pieceRate + (qty*getattr(processPrice, 'price'))
       # print("Piece rate Payment: ", pieceRate)
+    
+    currAttendances = attendance.filter(employeeID=employee.id).values('percentage')
+    attendancePercentage = 0
+    for i in range(len(currAttendances)):
+      currPercentage = currAttendances[i]['percentage']
+      attendancePercentage = attendancePercentage + currPercentage
+    if attendancePercentage > 0:
+      attendancePercentage = attendancePercentage/100
 
+    # print(employee, attendancePercentage)
     try: 
       dailySalaryObj = DailySalary.objects.get(employeeID=getattr(employee, 'id'))
-      dailySalary = getattr(dailySalaryObj, 'dailySalary')
+      salary = float(getattr(dailySalaryObj, 'dailySalary'))*attendancePercentage
+      # print("Salary: ", salary)
     except:
-      dailySalary = 0
+      salary = 0
     
-    salaries.append(Salary(employee, dailySalary, pieceRate))
+    currAllowances = allowance.filter(employeeID=employee.id).values('amount')
+    allowanceAmt = 0
+    for i in range(len(currAllowances)):
+      currAmt = currAllowances[i]['amount']
+      allowanceAmt = allowanceAmt + currAmt
+
+    currDeductions = deduction.filter(employeeID=employee.id).values('amount')
+    deductionAmt = 0
+    for i in range(len(currDeductions)):
+      currAmt = currDeductions[i]['amount']
+      deductionAmt = deductionAmt + currAmt
+
+    salaries.append(Salary(employee, salary, pieceRate, allowanceAmt, deductionAmt))
     i = i+1
 
   # print(salaries)
@@ -730,22 +757,10 @@ def attendance_create_view(request):
 
 def attendance_edit_view(request, attendance_id):
   return edit(request, attendance_id, AttendanceForm, Attendance, redirect(request.GET.get("next")), 'attendance/attendance_edit.html')
-  # form = DailySalaryForm(instance=DailySalary.objects.get(id=attendance_id))
-
-  # if request.method == "POST":
-  #     form = DailySalaryForm(request.POST, request.FILES, instance=DailySalary.objects.get(id=attendance_id))
-
-  #     if form.is_valid():
-  #         form.save()
-  #         return redirect(attendance_view)
-
-  # return render(request, 'attendance/attendance_edit.html', {
-  #     "form": form
-  # })
 
 def attendance_delete_view(request):
   delete(request, Attendance)
-  return  redirect(attendance_view)
+  return  redirect(request.GET.get("next"))
 
 def inputDateAttendance_view(request):
   form1 = ChooseEmployeeForm(request.POST or None)
@@ -805,3 +820,71 @@ def attendance_employee_create_view(request, employee_id):
     'form2':form2
   }
   return render(request, "attendance/inputDate.html", context)
+
+
+
+
+
+
+
+
+
+
+
+
+
+#ALLOWANCE RELATED VIEWS
+def allowance_view(request):
+  allowances = Allowance.objects.all()
+  flag   = True
+  if not allowances:
+    flag=False
+
+  context = {
+    'allowances':allowances,
+    'flags':flag
+  }
+  return render(request, 'salary/allowance/allowance.html', context)
+
+def allowance_create_view(request):
+  return create(request, AllowanceForm, redirect(allowance_view), 'salary/allowance/allowance_create.html')
+
+def allowance_edit_view(request, allowance_id):
+  return edit(request, allowance_id, AllowanceForm, Allowance, redirect(request.GET.get("next")), 'attendance/attendance_edit.html')
+
+def allowance_delete_view(request):
+  delete(request, Allowance)
+  return  redirect(request.GET.get("next"))
+
+
+
+
+
+
+
+
+
+
+
+#DEDUCTION RELATED VIEWS
+def deduction_view(request):
+  deductions = Deduction.objects.all()
+  flag   = True
+  if not deductions:
+    flag=False
+
+  context = {
+    'deductions':deductions,
+    'flags':flag
+  }
+  return render(request, 'salary/deduction/deduction.html', context)
+
+def deduction_create_view(request):
+  return create(request, DeductionForm, redirect(deduction_view), 'salary/deduction/deduction_create.html')
+
+def deduction_edit_view(request, deduction_id):
+  return edit(request, deduction_id, DeductionForm, Deduction, redirect(request.GET.get("next")), 'salary/deduction/deduction_edit.html')
+
+def deduction_delete_view(request):
+  delete(request, Deduction)
+  return  redirect(request.GET.get("next"))

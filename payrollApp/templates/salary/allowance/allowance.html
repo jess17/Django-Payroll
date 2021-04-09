@@ -1,0 +1,46 @@
+{% extends 'view_base.html' %}
+
+{% load humanize %}
+
+{% block viewTitle %}All Allowance{% endblock %}
+{% block addBtn %}
+  <a href="{% url 'create-allowance' %}" class="btn btn-info">Add Allowance</a>
+{% endblock %}
+
+{% block columns %}
+  {% if flags %}
+    {% block form %}
+      <form action="{% url 'delete-allowance'%}?next={{ request.path }}" method="POST">{% csrf_token %}
+    {% endblock %}
+
+    <th></th>
+    <th>ID</th>
+    <th>ID | Employee</th>
+    <th>Allowance Amount</th>
+    <th>Date</th>
+    <th>Description</th>
+  {% endif %}
+{% endblock %}
+            
+{% block tbodyContent %}
+  {% if not flags %}
+  <h3>No Allowance Record</h3>
+  {% else %}
+    {% for allowance  in allowances %}
+      <tr>
+        <td><input type="checkbox" name="selected" value="{{ allowance.id }}"></td>
+
+        <td scope="row"><a href="{% url 'edit-allowance' allowance.id %}?next={{ request.path }}">{{ allowance.id }}</a></td>
+        <td>{{ allowance.employeeID }}</td>
+        <td>{{ allowance.amount|intcomma}}</td>
+        <td>{{ allowance.date }}</td>
+        <td>{% if allowance.description %}
+              {{ allowance.description|slice:"0:100" }}{% if allowance.description|length > 100 %}...{% endif %}
+            {% endif %}
+            </td>
+      </tr>
+    {% endfor %}
+  {% endif %}
+{% endblock %}
+
+ 

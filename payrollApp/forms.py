@@ -2,6 +2,7 @@ from django import forms
 
 
 from .models import Order, Process, Employee, Position, EmploymentType, CompletedProcess, DailySalary, Attendance
+from .models import Allowance, Deduction
 from django import forms
 
 from django.core.exceptions import ValidationError
@@ -167,6 +168,32 @@ class AttendanceForm(forms.ModelForm):
 
 class ChooseEmployeeForm(forms.Form):
   employeeID  = forms.ModelChoiceField(queryset=Employee.objects.all().order_by('-id'), label='Employee', required=True)
+
+class AllowanceForm(forms.ModelForm):
+  employeeID  = forms.ModelChoiceField(queryset=Employee.objects.all().order_by('-id'), label='Employee', required=True)
+  date   = forms.DateField(label='Date', required=True, widget=DateInput())
+  
+  class Meta:
+    model = Allowance
+    fields = [
+      'employeeID',
+      'amount',
+      'description',
+      'date'
+    ]
+
+class DeductionForm(forms.ModelForm):
+  employeeID  = forms.ModelChoiceField(queryset=Employee.objects.all().order_by('-id'), label='Employee', required=True)
+  date   = forms.DateField(label='Date', required=True, widget=DateInput())
+  
+  class Meta:
+    model = Deduction
+    fields = [
+      'employeeID',
+      'amount',
+      'description',
+      'date'
+    ]
 
 
 

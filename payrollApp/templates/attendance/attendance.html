@@ -20,6 +20,7 @@
     <th>Date</th>
     <th>ID | Employee</th>
     <th>Attendance</th>
+    <th>Status</th>
   {% endif %}
 {% endblock %}
 
@@ -37,7 +38,15 @@
         <td>{{ attendance.date }}</td> 
         <td><a href="{% url 'attendance-of-employee' attendance.employeeID|escape|getID %}">{{ attendance.employeeID }}</a></td>
         <td>{{ attendance.percentage }}%</td>
-
+        <td>
+          {% if attendance.percentage == 100 %}
+            <button class="btn btn-success" disabled>On time</button>
+          {% elif attendance.percentage == 0 %}
+            <button class="btn btn-danger" disabled>Absent</button>
+          {% else %}
+            <button class="btn btn-warning" disabled>Late</button>
+          {% endif %}
+        </td>
       </tr>
     {% endfor %}
   {% endif %}
