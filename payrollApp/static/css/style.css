@@ -138,11 +138,8 @@ body {
   margin-right: 0.5rem;
 }
 
-form{
-  overflow: scroll;
-}
 
-@media only screen and (max-width: 860px) {
+@media only screen and (max-width: 1000px) {
   .sidebar .list-group .list-group-item,
   .sidebar .list-group .list-group-item:focus {
     padding-left: 25px;
@@ -151,6 +148,7 @@ form{
   .sidebar .list-group > span {
     padding: 10px 15px;
   }
+
 }
 @media only screen and (min-width: 576px) {
   .collapse:not(.show) {
