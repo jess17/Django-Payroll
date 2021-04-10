@@ -2,6 +2,7 @@
 
 {% load static %}
 {% load humanize %}
+{% load bootstrap4 %}
 
 {% block viewTitle %}Attendance Record of {{ employee.firstName|capfirst }} {% if employee.lastName %}{{ employee.lastName|capfirst }}{% endif %}{% endblock %}
 
@@ -9,6 +10,12 @@
   <a href="{% url 'create-attendance-employee' employee.id %}?next={{ request.path }}" class="btn btn-info">Input Attendance</a>
 {% endblock %}
 
+{% block searchForm %}
+    <form method="GET" class="searchForm">
+      {% bootstrap_form myFilter.form layout='inline' %}
+      <button class="btn btn-primary" style="height: max-content;">Search</button>
+    </form>
+{% endblock %}
 
 {% block columns %}
   {% if flags %}

@@ -1,8 +1,8 @@
 {% extends 'view_base.html' %}
 
-{% load static %}
 {% load customtags %}
 {% load humanize %}
+{% load bootstrap4 %}
 
 {% block script %}
   <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css"> 
@@ -28,10 +28,10 @@
 {% endblock %}
 
 {% block searchForm %}
-    <form method="GET" style="padding: 8px;">
-      {{ myFilter.form }}
-      <button class="btn btn-primary">Search</button>
-    </form>
+  <form method="GET" class="searchForm">
+    {% bootstrap_form myFilter.form %}
+    <button class="btn btn-primary">Search</button>
+  </form>
 {% endblock %}
 
 {% block columns %}

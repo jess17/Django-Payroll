@@ -16,7 +16,7 @@ from django.forms import formset_factory
 
 from .models import Order, Process, Employee, EmploymentType, Position, CompletedProcess, DailySalary, Attendance, Allowance, Deduction
 from .forms import UserForm, OrderForm, ProcessForm, EmployeeForm, PositionForm, EmploymentTypeForm, CompletedProcessForm, DailySalaryForm, GetDateForm, AttendanceForm, ChooseEmployeeForm, AllowanceForm, DeductionForm
-from .filters import OrderFilter, AllowanceFilter, DeductionFilter, EmployeeFilter, CompletedProcessFilter, ProcessFilter, AttendanceFilter
+from .filters import OrderFilter, AllowanceFilter, DeductionFilter, EmployeeFilter, CompletedProcessFilter, ProcessFilter, AttendanceFilter, AttendanceOfEmployeeFilter, CompletedProcessOfProcessFilter, CompletedProcessOfEmployeeFilter
 
 # Create your views here.
 # def login_view(request):
@@ -491,11 +491,15 @@ def completedProcess_of_process_view(request, process_id):
   else:
     flag=False
   
+  myFilter = CompletedProcessOfProcessFilter(request.GET, queryset=completedProcesses)
+  completedProcesses = myFilter.qs
+
   context = {
     'completedProcesses':completedProcesses,
     'flags':flag,
     'process':process,
-    'completedQty':completedQty
+    'completedQty':completedQty,
+    'myFilter': myFilter
   }
   return render(request, "completedProcess/completedProcess_of_process.html", context)
 
@@ -510,10 +514,14 @@ def completedProcess_of_employee_view(request, employee_id):
   else:
     flag=False
   
+  myFilter = CompletedProcessOfEmployeeFilter(request.GET, queryset=completedProcesses)
+  completedProcesses = myFilter.qs
+
   context = {
     'completedProcesses':completedProcesses,
     'flags':flag,
     'employee':employee,
+    'myFilter': myFilter
   }
   return render(request, "completedProcess/completedProcess_of_employee.html", context)
 
@@ -887,15 +895,18 @@ def attendance_of_employee_view(request, employee_id):
   attendances = Attendance.objects.filter(employeeID=employee_id)
 
   if attendances:
-    #There's at least one completedProcess
     flag=True
   else:
     flag=False
   
+  myFilter = AttendanceOfEmployeeFilter(request.GET, queryset=attendances)
+  attendances = myFilter.qs
+
   context = {
     'attendances':attendances,
     'flags':flag,
     'employee':employee,
+    'myFilter': myFilter
   }
   return render(request, "attendance/attendance_of_employee.html", context)
 

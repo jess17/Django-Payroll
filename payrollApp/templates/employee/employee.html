@@ -1,5 +1,8 @@
 {% extends 'view_base.html' %}
 
+{% load static %}
+{% load bootstrap4 %}
+
 {% block script %}
   <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css"> 
   <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
@@ -21,10 +24,19 @@
 {% endblock %}
 
 {% block searchForm %}
-    <form method="GET" style="padding: 8px;">
-      {{ myFilter.form }}
+
+<!-- <span class="btn btn-primary" role="button" data-toggle="collapse" href="#searchFormContainer" aria-expanded="false" aria-controls="searchFormContainer">
+  Filter
+</span> -->
+<!-- <div class="collapse" id="searchFormContainer">
+  <div class="card card-body"> -->
+    <form method="GET" class="searchForm">
+      {% bootstrap_form myFilter.form %}
       <button class="btn btn-primary">Search</button>
     </form>
+
+  <!-- </div>
+</div> -->
 {% endblock %}
 
 {% block columns %}
