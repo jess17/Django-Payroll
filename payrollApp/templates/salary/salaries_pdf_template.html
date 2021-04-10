@@ -1,0 +1,68 @@
+
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    @page {
+      size: a4 landscape;
+      margin: 2cm;
+      /* table { -pdf-keep-with-next: true; } */
+      /* @frame content_frame {           Content Frame 
+            left: 50pt; width: 512pt; top: 90pt; height: 632pt;
+      } */
+      /* @frame footer_frame {           
+        -pdf-frame-content: footer_content;
+        left: 50pt; width: 512pt; top: 772pt; height: 20pt;
+      } */
+    }
+  </style>
+  
+</head>
+<body>
+  <div class="card">
+    <div class="card-header bg-blue">
+      <h4 class="card-title text-center text-white" style="font-size: 18pt; text-align: center;">Salary from {{ startDate }} to {{ endDate }}</h4>
+    </div>
+    <div class="card-body">
+      <table class="table table-bordered table-hover table-striped" border="1" style="padding: 5px 5px 5px 5px;"> 
+        <thead>
+          <tr class="bg-gray" style="font-size: 13pt;">
+              {% if flags %}
+                <th>ID | Employee</th>
+                <th>Salary</th>
+                <th>Piece rate payment</th>
+                <th>Allowance</th>
+                <th>Deduction</th>
+                <th>Total</th>
+              {% endif %}
+          </tr>
+      </thead>
+      <tbody>
+        {% if not flags %}
+          <h3>No Salary Record in this date</h3>
+          {% else %}
+            {% for salary  in salaries %}
+              <tr style="font-size: 12pt; text-align: center;">
+                <td style="text-align: left;">{{ salary.employeeID }}</td>
+                <td>{{ salary.salary|intcomma }}</td> 
+                <td>{{ salary.pieceRate|intcomma }}</td>
+                <td>{{ salary.allowance|intcomma }}</td>
+                <td>{% if salary.deduction > 0 %}-{% endif %}{{ salary.deduction|intcomma }}</td>
+                <td>{{ salary.total|intcomma }}</td>
+              </tr>
+            {% endfor %}
+          {% endif %}
+      </tbody>
+      </table>
+      <h3 style="font-size: 18pt; text-align: right;">Total = {{ total|intcomma }}</h3>
+    </div>
+  </div>
+  
+</body>
+</html>
+
+ 
