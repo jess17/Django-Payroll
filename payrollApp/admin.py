@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Order, Employee, Process, Position, EmploymentType, CompletedProcess, DailySalary, Attendance
+from .models import Order, Employee, Process, Position, EmploymentType, CompletedProcess, DailySalary, Attendance, Allowance, Deduction
 # Register your models here.
 # admin.site.register(Order)
 # admin.site.register(Employee)
@@ -55,6 +55,16 @@ class AttendanceAdmin(admin.ModelAdmin):
   list_filter = ('date', EmployeeFilter)
   list_display = ('employeeID', 'date', 'percentage')
 
+class AllowanceAdmin(admin.ModelAdmin):
+  search_fields = ['employeeID__firstName', 'employeeID__lastName']
+  list_filter = ('date', EmployeeFilter)
+  list_display = ('employeeID', 'amount', 'date')
+
+class DeductionAdmin(admin.ModelAdmin):
+  search_fields = ['employeeID__firstName', 'employeeID__lastName']
+  list_filter = ('date', EmployeeFilter)
+  list_display = ('employeeID', 'amount', 'date')
+
 # Register your models here.
 admin.site.register(CompletedProcess, CompletedProcessAdmin)
 admin.site.register(Employee, EmployeeAdmin)
@@ -64,3 +74,5 @@ admin.site.register(Position, PositionAdmin)
 admin.site.register(EmploymentType, PositionAdmin)
 admin.site.register(DailySalary, DailySalaryAdmin)
 admin.site.register(Attendance, AttendanceAdmin)
+admin.site.register(Allowance, AllowanceAdmin)
+admin.site.register(Deduction, DeductionAdmin)
