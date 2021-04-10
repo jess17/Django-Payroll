@@ -12,7 +12,7 @@
 
   <div class="card">
     <div class="card-header bg-blue">
-      <h4 class="card-title text-center text-white">Salary of {{ startDate }} to {{ endDate }}</h4>
+      <h4 class="card-title text-center text-white">Salary from {{ startDate }} to {{ endDate }}</h4>
     </div>
     <div class="card-body">
       <table class="table table-bordered table-hover table-striped">
@@ -31,7 +31,7 @@
       </thead>
       <tbody>
         {% if not flags %}
-          <h3>No Salary Record in this date</h3>
+          <h3>No Salary Record in this date ({{ startDate }} to {{ endDate }})</h3>
           {% else %}
             {% for salary  in salaries %}
               <tr>
@@ -46,7 +46,9 @@
           {% endif %}
       </tbody>
       </table>
-      <h3>Total = {{ total|intcomma }}</h3>
+      <h3 style="text-align: right;">Total = {{ total|intcomma }}</h3>
+      <a class="btn btn-info" href="{% url 'view-salary-pdf' %}" target="_blank">View PDF</a>
+			<a class="btn btn-info"  href="{% url 'download-salary-pdf' %}">Download PDF</a>
     </div>
   </div>
   

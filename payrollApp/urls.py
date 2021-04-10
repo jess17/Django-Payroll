@@ -55,6 +55,8 @@ urlpatterns = [
 
     path('salary/date', views.inputDateSalary_view, name="inputDate-salary"),
     path('salary/', views.salary_view, name="salary"),
+    path('salary/pdf_view', views.ViewSalaryPDF.as_view(), name="view-salary-pdf"),
+    path('salary/pdf_download', views.DownloadSalaryPDF.as_view(), name="download-salary-pdf"),
     
     path('attendance/date', views.inputDateAttendance_view, name="inputDate-attendance"),
     path('attendance/', views.attendance_view, name="attendance"),

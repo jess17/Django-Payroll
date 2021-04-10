@@ -18,6 +18,13 @@ from .models import Order, Process, Employee, EmploymentType, Position, Complete
 from .forms import UserForm, OrderForm, ProcessForm, EmployeeForm, PositionForm, EmploymentTypeForm, CompletedProcessForm, DailySalaryForm, GetDateForm, AttendanceForm, ChooseEmployeeForm, AllowanceForm, DeductionForm
 from .filters import OrderFilter, AllowanceFilter, DeductionFilter, EmployeeFilter, CompletedProcessFilter, ProcessFilter, AttendanceFilter, AttendanceOfEmployeeFilter, CompletedProcessOfProcessFilter, CompletedProcessOfEmployeeFilter
 
+#IMPORT FOR PDF
+from io import BytesIO
+from django.http import HttpResponse
+from django.template.loader import get_template
+from django.views import View
+from xhtml2pdf import pisa
+
 # Create your views here.
 # def login_view(request):
 #   if request.user.is_authenticated:
@@ -1008,3 +1015,131 @@ def deduction_edit_view(request, deduction_id):
 def deduction_delete_view(request):
   delete(request, Deduction)
   return  redirect(request.GET.get("next"))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#TO PDF RELATED VIEWS
+def render_to_pdf(template_src, context_dict={}):
+	template = get_template(template_src)
+	html  = template.render(context_dict)
+	result = BytesIO()
+	pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result)
+	if not pdf.err:
+		return HttpResponse(result.getvalue(), content_type='application/pdf')
+	return None
+
+
+data = {
+	"company": "Dennnis Ivanov Company",
+	"address": "123 Street name",
+	"city": "Vancouver",
+	"state": "WA",
+	"zipcode": "98663",
+
+
+	"phone": "555-555-2345",
+	"email": "youremail@dennisivy.com",
+	"website": "dennisivy.com",
+	}
+
+
+def getSalary(request):
+  start = request.session.get("startDate")
+  end = request.session.get("endDate")
+
+  endPlus1 = datetime.strptime(end, "%Y-%m-%d")
+  endPlus1 = endPlus1 + timedelta(days=1)
+  completedProcesses = CompletedProcess.objects.filter(dateRecorded__range=[start, endPlus1])
+  employees          = Employee.objects.all()
+  attendance         = Attendance.objects.filter(date__range=[start, endPlus1])
+  allowance          = Allowance.objects.filter(date__range=[start, endPlus1])
+  deduction          = Deduction.objects.filter(date__range=[start, endPlus1])
+  
+  salaries = []
+  i = 0
+  for employee in employees:
+    pieceRate = 0
+    currCompletedProcesses = completedProcesses.filter(employeeID=employee.id).values('processID', 'quantity')
+    for currCompletedProcess in currCompletedProcesses:
+      qty = currCompletedProcess['quantity']
+      processPrice = Process.objects.get(id=currCompletedProcess['processID'])
+      pieceRate = pieceRate + (qty*getattr(processPrice, 'price'))
+    
+    currAttendances = attendance.filter(employeeID=employee.id).values('percentage')
+    attendancePercentage = 0
+    for i in range(len(currAttendances)):
+      currPercentage = currAttendances[i]['percentage']
+      attendancePercentage = attendancePercentage + currPercentage
+    if attendancePercentage > 0:
+      attendancePercentage = attendancePercentage/100
+
+    try: 
+      dailySalaryObj = DailySalary.objects.get(employeeID=getattr(employee, 'id'))
+      salary = float(getattr(dailySalaryObj, 'dailySalary'))*attendancePercentage
+
+    except:
+      salary = 0
+    
+    currAllowances = allowance.filter(employeeID=employee.id).values('amount')
+    allowanceAmt = 0
+    for i in range(len(currAllowances)):
+      currAmt = currAllowances[i]['amount']
+      allowanceAmt = allowanceAmt + currAmt
+
+    currDeductions = deduction.filter(employeeID=employee.id).values('amount')
+    deductionAmt = 0
+    for i in range(len(currDeductions)):
+      currAmt = currDeductions[i]['amount']
+      deductionAmt = deductionAmt + currAmt
+
+    salaries.append(Salary(employee, salary, pieceRate, allowanceAmt, deductionAmt))
+    i = i+1
+
+  flag   = True
+  if not completedProcesses:
+    flag=False
+
+  total = 0
+  for salary in salaries:
+    total = total + salary.total
+
+  context = {
+    'salaries':salaries,
+    'flags':flag,
+    'startDate': start,
+    'endDate': end,
+    'total': total
+  }
+  return context
+
+#Opens up page as PDF
+class ViewSalaryPDF(View):
+  def get(self, request, *args, **kwargs):
+    data = getSalary(request)
+    
+    pdf = render_to_pdf('salary/salaries_pdf_template.html', data)
+    return HttpResponse(pdf, content_type='application/pdf')
+
+
+#Automaticly downloads to PDF file
+class DownloadSalaryPDF(View):
+  def get(self, request, *args, **kwargs):
+    data = getSalary(request)
+    pdf = render_to_pdf('salary/salaries_pdf_template.html', data)
+    
+    response = HttpResponse(pdf, content_type='application/pdf')
+    filename = "Salary_%s_to_%s.pdf" %(data["startDate"], data["endDate"])
+    content = "attachment; filename=%s" %(filename)
+    response['Content-Disposition'] = content
+    return response
