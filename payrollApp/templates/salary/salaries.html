@@ -29,8 +29,9 @@
               {% endif %}
           </tr>
       </thead>
+      {% if not flags %}
       <tbody>
-        {% if not flags %}
+        
           <h3>No Salary Record in this date ({{ startDate }} to {{ endDate }})</h3>
           {% else %}
             {% for salary  in salaries %}
@@ -43,12 +44,13 @@
                 <td>{{ salary.total|intcomma }}</td>
               </tr>
             {% endfor %}
-          {% endif %}
+          
       </tbody>
       </table>
       <h3 style="text-align: right;">Total = {{ total|intcomma }}</h3>
       <a class="btn btn-info" href="{% url 'view-salary-pdf' %}" target="_blank">View PDF</a>
 			<a class="btn btn-info"  href="{% url 'download-salary-pdf' %}">Download PDF</a>
+      {% endif %}
     </div>
   </div>
   
