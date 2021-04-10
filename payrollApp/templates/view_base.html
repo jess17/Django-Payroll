@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block script %}
-<link rel="stylesheet" href="{% static 'css/tableStyle.css' %}">
+<!-- <link rel="stylesheet" href="{% static 'css/tableStyle.css' %}"> -->
 {% endblock %}
 
 {% block page %}
@@ -39,7 +39,7 @@
         </div>
       </div>
       
-      
+        {% block searchForm %}{% endblock %}
         {% block form %}{% endblock %}
       <table class="table table-bordered table-hover table-striped">
         <thead>

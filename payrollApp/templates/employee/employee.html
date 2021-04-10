@@ -1,11 +1,42 @@
 {% extends 'view_base.html' %}
 
+{% load static %}
+{% load bootstrap4 %}
+
+{% block script %}
+  <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css"> 
+  <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+  <script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+  <script>
+  $(document).ready(function() {
+      $('.datepicker').datepicker({dateFormat: 'yy-mm-dd'});
+
+  });
+  </script>
+{% endblock %}
+
 {% block viewTitle %}Employee{% endblock %}
 {% block addBtn %}
 <a href="{% url 'create-position' %}?next={{ request.path }}" class="btn btn-info">Add Position</a>
 <a href="{% url 'create-employmentType' %}?next={{ request.path }}" class="btn btn-info">Add Employment Type</a>
 <a href="{% url 'create-employee' %}" class="btn btn-info">Add Employee</a>
 
+{% endblock %}
+
+{% block searchForm %}
+
+<!-- <span class="btn btn-primary" role="button" data-toggle="collapse" href="#searchFormContainer" aria-expanded="false" aria-controls="searchFormContainer">
+  Filter
+</span> -->
+<!-- <div class="collapse" id="searchFormContainer">
+  <div class="card card-body"> -->
+    <form method="GET" class="searchForm">
+      {% bootstrap_form myFilter.form %}
+      <button class="btn btn-primary">Search</button>
+    </form>
+
+  <!-- </div>
+</div> -->
 {% endblock %}
 
 {% block columns %}
@@ -32,7 +63,7 @@
       <tr>
         <td><input type="checkbox" name="selected" value="{{ employee.id }}" id="enableDeleteBtn"></td>
 
-        <td scope="row"><a href="{% url 'edit-employee' employee.id %}">{{ employee.id }}</a></td>
+        <td scope="row"><a href="{% url 'edit-employee' employee.id %}?next={{ request.path }}">{{ employee.id }}</a></td>
         <td>{{ employee.firstName|capfirst }} {% if employee.lastName %}{{ employee.lastName|capfirst }}{% endif %}</td>
         <!-- <td>{{ order.name }}</td> -->
         <td>{{ employee.positionID }}</td> 

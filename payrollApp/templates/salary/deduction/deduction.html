@@ -1,0 +1,65 @@
+{% extends 'view_base.html' %}
+
+{% load humanize %}
+{% load bootstrap4 %}
+
+{% block script %}
+  <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css"> 
+  <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+  <script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+  <script>
+  $(document).ready(function() {
+      $('.datepicker').datepicker({dateFormat: 'yy-mm-dd'});
+
+  });
+  </script>
+{% endblock %}
+
+{% block viewTitle %}All Deduction{% endblock %}
+{% block addBtn %}
+  <a href="{% url 'create-deduction' %}?next={{ request.path }}" class="btn btn-info">Add Deduction</a>
+{% endblock %}
+
+{% block searchForm %}
+  <form method="GET" class="searchForm">
+    {% bootstrap_form myFilter.form %}
+    <button class="btn btn-primary col-lg-12">Search</button>
+  </form>
+{% endblock %}
+
+{% block columns %}
+  {% if flags %}
+    {% block form %}
+      <form action="{% url 'delete-deduction'%}?next={{ request.path }}" method="POST">{% csrf_token %}
+    {% endblock %}
+    <th></th>
+    <th>ID</th>
+    <th>ID | Employee</th>
+    <th>Deduction Amount</th>
+    <th>Date</th>
+    <th>Description</th>
+  {% endif %}
+{% endblock %}
+            
+{% block tbodyContent %}
+  {% if not flags %}
+  <h3>No Deduction Record</h3>
+  {% else %}
+    {% for deduction  in deductions %}
+      <tr>
+        <td><input type="checkbox" name="selected" value="{{ deduction.id }}"></td>
+
+        <td scope="row"><a href="{% url 'edit-deduction' deduction.id %}?next={{ request.path }}">{{ deduction.id }}</a></td>
+        <td>{{ deduction.employeeID }}</td>
+        <td>{{ deduction.amount|intcomma }}</td>
+        <td>{{ deduction.date }}</td>
+        <td>{% if deduction.description %}
+              {{ deduction.description|slice:"0:100" }}{% if deduction.description|length > 100 %}...{% endif %}
+            {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+  {% endif %}
+{% endblock %}
+
+ 

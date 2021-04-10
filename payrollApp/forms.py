@@ -2,9 +2,18 @@ from django import forms
 
 
 from .models import Order, Process, Employee, Position, EmploymentType, CompletedProcess, DailySalary, Attendance
-from django import forms
+from .models import Allowance, Deduction
+
+from django.contrib.auth.models import User
 
 from django.core.exceptions import ValidationError
+
+class UserForm(forms.ModelForm):
+  username = forms.CharField(max_length=100, required=True)
+  password = forms.CharField(widget=forms.PasswordInput())
+  class Meta:
+    model = User
+    fields = {"username", "password"}
 
 class OrderForm(forms.ModelForm):
   class Meta:
@@ -167,6 +176,32 @@ class AttendanceForm(forms.ModelForm):
 
 class ChooseEmployeeForm(forms.Form):
   employeeID  = forms.ModelChoiceField(queryset=Employee.objects.all().order_by('-id'), label='Employee', required=True)
+
+class AllowanceForm(forms.ModelForm):
+  employeeID  = forms.ModelChoiceField(queryset=Employee.objects.all().order_by('-id'), label='Employee', required=True)
+  date   = forms.DateField(label='Date', required=True, widget=DateInput())
+  
+  class Meta:
+    model = Allowance
+    fields = [
+      'employeeID',
+      'amount',
+      'description',
+      'date'
+    ]
+
+class DeductionForm(forms.ModelForm):
+  employeeID  = forms.ModelChoiceField(queryset=Employee.objects.all().order_by('-id'), label='Employee', required=True)
+  date   = forms.DateField(label='Date', required=True, widget=DateInput())
+  
+  class Meta:
+    model = Deduction
+    fields = [
+      'employeeID',
+      'amount',
+      'description',
+      'date'
+    ]
 
 
 

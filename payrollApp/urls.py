@@ -2,9 +2,14 @@ from django.urls import path
 
 from . import views
 
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('', views.home_view, name="home"),
+    # path('login/', views.login_view, name="login"),
+    path('login/', auth_views.LoginView.as_view(template_name='account/login.html'), name="login"),
+    path('logout/', auth_views.LogoutView.as_view(next_page='/'), name = 'logout'),
+    # path('logout/', views.logout_view, name="logout"),
 
     path('order/', views.order_view, name="order"),
     path('order/create/', views.order_create_view, name="create-order"),
@@ -56,4 +61,16 @@ urlpatterns = [
     path('attendance/create/', views.attendance_create_view, name="create-attendance"),
     path('attendance/edit/<attendance_id>/', views.attendance_edit_view, name="edit-attendance"),
     path('attendance/delete/', views.attendance_delete_view, name="delete-attendance"),
+    path('attendance/employee/<employee_id>/', views.attendance_of_employee_view, name="attendance-of-employee"),
+    path('attendance/employee/create/<employee_id>/', views.attendance_employee_create_view, name="create-attendance-employee"),
+
+    path('allowance/', views.allowance_view, name="allowance"),
+    path('allowance/create/', views.allowance_create_view, name="create-allowance"),
+    path('allowance/edit/<allowance_id>/', views.allowance_edit_view, name="edit-allowance"),
+    path('allowance/delete/', views.allowance_delete_view, name="delete-allowance"),
+
+    path('deduction/', views.deduction_view, name="deduction"),
+    path('deduction/create/', views.deduction_create_view, name="create-deduction"),
+    path('deduction/edit/<deduction_id>/', views.deduction_edit_view, name="edit-deduction"),
+    path('deduction/delete/', views.deduction_delete_view, name="delete-deduction"),
 ]

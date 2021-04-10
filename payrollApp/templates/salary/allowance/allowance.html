@@ -1,0 +1,67 @@
+{% extends 'view_base.html' %}
+
+{% load static %}
+{% load humanize %}
+{% load bootstrap4 %}
+
+{% block script %}
+  <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css"> 
+  <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+  <script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+  <script>
+  $(document).ready(function() {
+      $('.datepicker').datepicker({dateFormat: 'yy-mm-dd'});
+
+  });
+  </script>
+{% endblock %}
+
+{% block viewTitle %}All Allowance{% endblock %}
+{% block addBtn %}
+  <a href="{% url 'create-allowance' %}" class="btn btn-info">Add Allowance</a>
+{% endblock %}
+
+{% block searchForm %}
+  <form method="GET" class="searchForm">
+    {% bootstrap_form myFilter.form %}
+    <button class="btn btn-primary col-lg-12">Search</button>
+  </form>
+{% endblock %}
+
+{% block columns %}
+  {% if flags %}
+    {% block form %}
+      <form action="{% url 'delete-allowance'%}?next={{ request.path }}" method="POST">{% csrf_token %}
+    {% endblock %}
+
+    <th></th>
+    <th>ID</th>
+    <th>ID | Employee</th>
+    <th>Allowance Amount</th>
+    <th>Date</th>
+    <th>Description</th>
+  {% endif %}
+{% endblock %}
+            
+{% block tbodyContent %}
+  {% if not flags %}
+  <h3>No Allowance Record</h3>
+  {% else %}
+    {% for allowance  in allowances %}
+      <tr>
+        <td><input type="checkbox" name="selected" value="{{ allowance.id }}"></td>
+
+        <td scope="row"><a href="{% url 'edit-allowance' allowance.id %}?next={{ request.path }}">{{ allowance.id }}</a></td>
+        <td>{{ allowance.employeeID }}</td>
+        <td>{{ allowance.amount|intcomma}}</td>
+        <td>{{ allowance.date }}</td>
+        <td>{% if allowance.description %}
+              {{ allowance.description|slice:"0:100" }}{% if allowance.description|length > 100 %}...{% endif %}
+            {% endif %}
+            </td>
+      </tr>
+    {% endfor %}
+  {% endif %}
+{% endblock %}
+
+ 

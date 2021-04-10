@@ -1,12 +1,33 @@
 {% extends 'view_base.html' %}
 
+{% load static %}
 {% load customtags %}
 {% load humanize %}
+{% load bootstrap4 %}
+
+{% block script %}
+  <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css"> 
+  <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+  <script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+  <script>
+  $(document).ready(function() {
+      $('.datepicker').datepicker({dateFormat: 'yy-mm-dd', maxDate:'0'});
+
+  });
+  </script>
+{% endblock %}
 
 {% block viewTitle %}Attendance Record{% endblock %}
 {% block addBtn %}
 <a href="{% url 'inputDate-attendance' %}" class="btn btn-info">Input Attendance</a>
 
+{% endblock %}
+
+{% block searchForm %}
+  <form method="GET" class="searchForm">
+    {% bootstrap_form myFilter.form %}
+    <button class="btn btn-primary">Search</button>
+  </form>
 {% endblock %}
 
 {% block columns %}
@@ -20,6 +41,7 @@
     <th>Date</th>
     <th>ID | Employee</th>
     <th>Attendance</th>
+    <th>Status</th>
   {% endif %}
 {% endblock %}
 
@@ -33,11 +55,19 @@
       <tr>
         <td><input type="checkbox" name="selected" value="{{ attendance.id }}" id="enableDeleteBtn"></td>
 
-        <td><a href="{% url 'edit-attendance' attendance.id %}">{{ attendance.id }}</a></td>
+        <td><a href="{% url 'edit-attendance' attendance.id %}?next={{ request.path }}">{{ attendance.id }}</a></td>
         <td>{{ attendance.date }}</td> 
-        <td>{{ attendance.employeeID }}</td>
+        <td><a href="{% url 'attendance-of-employee' attendance.employeeID|escape|getID %}">{{ attendance.employeeID }}</a></td>
         <td>{{ attendance.percentage }}%</td>
-
+        <td>
+          {% if attendance.percentage == 100 %}
+            <button class="btn btn-success" disabled>On time</button>
+          {% elif attendance.percentage == 0 %}
+            <button class="btn btn-danger" disabled>Absent</button>
+          {% else %}
+            <button class="btn btn-warning" disabled>Late</button>
+          {% endif %}
+        </td>
       </tr>
     {% endfor %}
   {% endif %}

@@ -20,13 +20,13 @@
             
 {% block tbodyContent %}
   {% if not flags %}
-  <h3>No Employment Type/h3>
+  <h3>No Employment Type</h3>
   {% else %}
     {% for employmentType  in employmentTypes %}
       <tr>
         <td><input type="checkbox" name="selected" value="{{ employmentType.id }}"></td>
 
-        <td scope="row"><a href="{% url 'edit-employmentType' employmentType.id %}?next={{ request.path }}">{{ employmentType.id }}</a></td>
+        <td><a href="{% url 'edit-employmentType' employmentType.id %}?next={{ request.path }}">{{ employmentType.id }}</a></td>
         <td>{{ employmentType.name}}</td>
         <td>{{ employmentType.description|slice:"0:100" }}{% if employmentType.description|length > 100 %}...{% endif %}</td>
       </tr>

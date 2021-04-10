@@ -104,7 +104,7 @@ class CompletedProcess(models.Model):
 
 class DailySalary(models.Model):
   employeeID    = models.OneToOneField('Employee', on_delete=models.CASCADE, unique=True)
-  dailySalary   = models.DecimalField(decimal_places=2, max_digits=100, validators=[MinValueValidator(0, message="Daily salary can't be less than 0")])
+  dailySalary   = models.DecimalField(decimal_places=2, max_digits=100, validators=[MinValueValidator(0, message="Daily salary can't be smaller than 0")])
   notes         = models.TextField(blank=True, null=True)
   lastModified  = models.DateTimeField(auto_now=True)
 
@@ -127,4 +127,19 @@ class Attendance(models.Model):
 
   class Meta:
     unique_together = [['employeeID', 'date']]
+
+class Allowance(models.Model):
+  employeeID  = models.ForeignKey('Employee', default=None, null=True, on_delete=models.SET_DEFAULT)
+  amount      = models.DecimalField(decimal_places=2, max_digits=100, validators=[MinValueValidator(0.01, message="Amount must be greater than 0")])
+  description = models.CharField(max_length=200, null=True, blank=True)
+  date        = models.DateField()
+
+class Deduction(models.Model):
+  employeeID  = models.ForeignKey('Employee', default=None, null=True, on_delete=models.SET_DEFAULT)
+  amount      = models.DecimalField(decimal_places=2, max_digits=100, validators=[MinValueValidator(0.01, message="Amount must be greater than 0")])
+  description = models.CharField(max_length=200, null=True, blank=True)
+  date        = models.DateField()
+  
+
+  
 

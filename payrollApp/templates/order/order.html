@@ -1,9 +1,30 @@
 {% extends 'view_base.html' %}
 
+{% load static %}
 {% load humanize %}
+{% load bootstrap4 %}
+
+{% block script %}
+  <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css"> 
+  <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+  <script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+  <script>
+  $(document).ready(function() {
+      $('.datepicker').datepicker({dateFormat: 'yy-mm-dd'});
+
+  });
+  </script>
+{% endblock %}
 
 {% block viewTitle %}Order{% endblock %}
 {% block addBtn %}<a href="{% url 'create-order' %}" class="btn btn-info">Add Order</a>{% endblock %}
+
+{% block searchForm %}
+    <form method="GET" class="searchForm">
+      {% bootstrap_form myFilter.form layout='inline' %}
+      <button class="btn btn-primary" style="height: max-content;">Search</button>
+    </form>
+{% endblock %}
 
 {% block columns %}
   {% if flags %}
@@ -33,7 +54,7 @@
       <tr>
         <td><input type="checkbox" name="selected" value="{{ order.id }}"></td>
 
-        <td scope="row"><a href="{% url 'edit-order' order.id %}">{{ order.id }}</a></td>
+        <td scope="row"><a href="{% url 'edit-order' order.id %}?next={{ request.path }}">{{ order.id }}</a></td>
         <td>{{ order.code }}</td>
         <td>{{ order.name }}</td>
         <td>{{ order.quantity|intcomma }}</td>
