@@ -3,6 +3,14 @@
 {% load customtags %}
 {% load humanize %}
 
+{% block script %}
+<style>
+  .searchBtn{
+    visibility: hidden !important;
+  }
+</style>
+{% endblock %}
+
 {% block viewTitle %}Daily Salary{% endblock %}
 {% block addBtn %}
 <a href="{% url 'create-dailySalary' %}" class="btn btn-info">Add Daily Salary</a>

@@ -3,6 +3,8 @@
 {% load static %}
 {% load customtags %}
 {% load humanize %}
+{% load bootstrap4 %}
+
 
 {% block viewTitle %}Process of Order {{ order.code|capfirst }}{% endblock %}
 
@@ -10,6 +12,12 @@
   <a href="{% url 'create-process' order.id%}?next={{ request.path }}" class="btn btn-info">Add Process</a>
 {% endblock %}
 
+{% block searchForm %}
+  <form method="GET" class="searchForm">
+    {% bootstrap_form myFilter.form %}
+    <button class="btn btn-primary">Search</button>
+  </form>
+{% endblock %}
 
 {% block columns %}
   {% if flags %}

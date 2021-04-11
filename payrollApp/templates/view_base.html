@@ -30,6 +30,9 @@
         {% endif %}
 
         <div class="text-right" style="padding-bottom: 17px;">
+          <button class="btn btn-primary searchBtn">
+            Filter
+          </button>
           {% block addBtn %}{% endblock %}
           <!-- Button trigger modal -->
           <button type="button" class="btn btn-pink" data-toggle="modal" data-target="#deleteConf" id="delBtn" >
@@ -38,7 +41,6 @@
 
         </div>
       </div>
-      
         {% block searchForm %}{% endblock %}
         {% block form %}{% endblock %}
       <table class="table table-bordered table-hover table-striped {% if orders %} table-responsive-lg {% elif positions %} {% else %} table-responsive-md {% endif %} ">

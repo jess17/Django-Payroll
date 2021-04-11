@@ -4,6 +4,18 @@
 {% load humanize %}
 {% load bootstrap4 %}
 
+{% block script %}
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css"> 
+<script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="https://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+<script>
+$(document).ready(function() {
+    $('.datepicker').datepicker({dateFormat: 'yy-mm-dd', maxDate:'0'});
+
+});
+</script>
+{% endblock %}
+
 {% block viewTitle %}Attendance Record of {{ employee.firstName|capfirst }} {% if employee.lastName %}{{ employee.lastName|capfirst }}{% endif %}{% endblock %}
 
 {% block addBtn %}

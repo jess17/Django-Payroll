@@ -1,5 +1,13 @@
 {% extends 'view_base.html' %}
 
+{% block script %}
+<style>
+  .searchBtn{
+    visibility: hidden !important;
+  }
+</style>
+{% endblock %}
+
 {% block viewTitle %}Position{% endblock %}
 {% block addBtn %}
   <a href="{% url 'create-position' %}?next={{ request.path }}" class="btn btn-info">Add Position</a>

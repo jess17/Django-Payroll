@@ -1,6 +1,15 @@
 {% extends 'view_base.html' %}
 
 {% block viewTitle %}Employment Type{% endblock %}
+
+{% block script %}
+<style>
+  .searchBtn{
+    visibility: hidden !important;
+  }
+</style>
+{% endblock %}
+
 {% block addBtn %}
   <a href="{% url 'create-employmentType' %}?next={{ request.path }}" class="btn btn-info">Add Employment Type</a>
 {% endblock %}
