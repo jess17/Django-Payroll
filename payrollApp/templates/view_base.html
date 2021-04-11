@@ -41,7 +41,7 @@
       
         {% block searchForm %}{% endblock %}
         {% block form %}{% endblock %}
-      <table class="table table-bordered table-hover table-striped table-responsive-md">
+      <table class="table table-bordered table-hover table-striped {% if orders %} table-responsive-lg {% elif positions %} {% else %} table-responsive-md {% endif %} ">
         <thead>
           <tr class="bg-gray">
             {% block columns %}{% endblock %}

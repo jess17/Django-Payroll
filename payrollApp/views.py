@@ -57,7 +57,7 @@ from xhtml2pdf import pisa
 
 @login_required(login_url='login')
 def home_view(request):
-    return render(request, "real_base.html", {})
+    return redirect(employee_view)
 
 def create(request, Form, redirectVal, returnLoc):
   form = Form(request.POST or None)
