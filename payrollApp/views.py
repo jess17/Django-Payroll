@@ -688,38 +688,29 @@ class Salary:
   def getSalary(self, employeeID):
     return {'salary': self.salary, 'allowance':self.allowance, 'deduction':self.deduction, 'total':self.total}
 
-@login_required(login_url='login')
-def salary_view(request):
+def getSalary(request):
   start = request.session.get("startDate")
   end = request.session.get("endDate")
-  # print(start)
-  # print(end)
 
-  # endPlus1 is needed cuz date__range is inclusive
   endPlus1 = datetime.strptime(end, "%Y-%m-%d")
   endPlus1 = endPlus1 + timedelta(days=1)
   completedProcesses = CompletedProcess.objects.filter(dateRecorded__range=[start, endPlus1])
-  employees          = Employee.objects.all()
-  attendance         = Attendance.objects.filter(date__range=[start, endPlus1])
+  employees          = Employee.objects.all().exclude(terminationDate__isnull=False) #exclude employee that has been terminated
+  attendances        = Attendance.objects.filter(date__range=[start, endPlus1])
   allowance          = Allowance.objects.filter(date__range=[start, endPlus1])
   deduction          = Deduction.objects.filter(date__range=[start, endPlus1])
   
   salaries = []
   i = 0
   for employee in employees:
-    # print("Employee", employee)
     pieceRate = 0
     currCompletedProcesses = completedProcesses.filter(employeeID=employee.id).values('processID', 'quantity')
-    # print(currCompletedProcesses)
     for currCompletedProcess in currCompletedProcesses:
-      # print(currCompletedProcess)
       qty = currCompletedProcess['quantity']
       processPrice = Process.objects.get(id=currCompletedProcess['processID'])
-      # print("Price", processPrice)
       pieceRate = pieceRate + (qty*getattr(processPrice, 'price'))
-      # print("Piece rate Payment: ", pieceRate)
     
-    currAttendances = attendance.filter(employeeID=employee.id).values('percentage')
+    currAttendances = attendances.filter(employeeID=employee.id).values('percentage')
     attendancePercentage = 0
     for i in range(len(currAttendances)):
       currPercentage = currAttendances[i]['percentage']
@@ -727,11 +718,10 @@ def salary_view(request):
     if attendancePercentage > 0:
       attendancePercentage = attendancePercentage/100
 
-    # print(employee, attendancePercentage)
     try: 
       dailySalaryObj = DailySalary.objects.get(employeeID=getattr(employee, 'id'))
       salary = float(getattr(dailySalaryObj, 'dailySalary'))*attendancePercentage
-      # print("Salary: ", salary)
+
     except:
       salary = 0
     
@@ -750,18 +740,13 @@ def salary_view(request):
     salaries.append(Salary(employee, salary, pieceRate, allowanceAmt, deductionAmt))
     i = i+1
 
-  # print(salaries)
   flag   = True
-  if not completedProcesses:
+  if not completedProcesses and not attendances and not allowance and not deduction:
     flag=False
 
   total = 0
   for salary in salaries:
     total = total + salary.total
-
-  # Del the session creates an error when the page is refreshed
-  # del request.session['startDate']
-  # del request.session['endDate']
 
   context = {
     'salaries':salaries,
@@ -770,8 +755,95 @@ def salary_view(request):
     'endDate': end,
     'total': total
   }
+  return context
 
+@login_required(login_url='login')
+def salary_view(request):
+  context = getSalary(request)
   return render(request, 'salary/salaries.html', context)
+
+  # start = request.session.get("startDate")
+  # end = request.session.get("endDate")
+  # # print(start)
+  # # print(end)
+
+  # # endPlus1 is needed cuz date__range is inclusive
+  # endPlus1 = datetime.strptime(end, "%Y-%m-%d")
+  # endPlus1 = endPlus1 + timedelta(days=1)
+  # completedProcesses = CompletedProcess.objects.filter(dateRecorded__range=[start, endPlus1])
+  # employees          = Employee.objects.all()
+  # attendance         = Attendance.objects.filter(date__range=[start, endPlus1])
+  # allowance          = Allowance.objects.filter(date__range=[start, endPlus1])
+  # deduction          = Deduction.objects.filter(date__range=[start, endPlus1])
+  
+  # salaries = []
+  # i = 0
+  # for employee in employees:
+  #   # print("Employee", employee)
+  #   pieceRate = 0
+  #   currCompletedProcesses = completedProcesses.filter(employeeID=employee.id).values('processID', 'quantity')
+  #   # print(currCompletedProcesses)
+  #   for currCompletedProcess in currCompletedProcesses:
+  #     # print(currCompletedProcess)
+  #     qty = currCompletedProcess['quantity']
+  #     processPrice = Process.objects.get(id=currCompletedProcess['processID'])
+  #     # print("Price", processPrice)
+  #     pieceRate = pieceRate + (qty*getattr(processPrice, 'price'))
+  #     # print("Piece rate Payment: ", pieceRate)
+    
+  #   currAttendances = attendance.filter(employeeID=employee.id).values('percentage')
+  #   attendancePercentage = 0
+  #   for i in range(len(currAttendances)):
+  #     currPercentage = currAttendances[i]['percentage']
+  #     attendancePercentage = attendancePercentage + currPercentage
+  #   if attendancePercentage > 0:
+  #     attendancePercentage = attendancePercentage/100
+
+  #   # print(employee, attendancePercentage)
+  #   try: 
+  #     dailySalaryObj = DailySalary.objects.get(employeeID=getattr(employee, 'id'))
+  #     salary = float(getattr(dailySalaryObj, 'dailySalary'))*attendancePercentage
+  #     # print("Salary: ", salary)
+  #   except:
+  #     salary = 0
+    
+  #   currAllowances = allowance.filter(employeeID=employee.id).values('amount')
+  #   allowanceAmt = 0
+  #   for i in range(len(currAllowances)):
+  #     currAmt = currAllowances[i]['amount']
+  #     allowanceAmt = allowanceAmt + currAmt
+
+  #   currDeductions = deduction.filter(employeeID=employee.id).values('amount')
+  #   deductionAmt = 0
+  #   for i in range(len(currDeductions)):
+  #     currAmt = currDeductions[i]['amount']
+  #     deductionAmt = deductionAmt + currAmt
+
+  #   salaries.append(Salary(employee, salary, pieceRate, allowanceAmt, deductionAmt))
+  #   i = i+1
+
+  # # print(salaries)
+  # flag   = True
+  # if not completedProcesses:
+  #   flag=False
+
+  # total = 0
+  # for salary in salaries:
+  #   total = total + salary.total
+
+  # # Del the session creates an error when the page is refreshed
+  # # del request.session['startDate']
+  # # del request.session['endDate']
+
+  # context = {
+  #   'salaries':salaries,
+  #   'flags':flag,
+  #   'startDate': start,
+  #   'endDate': end,
+  #   'total': total
+  # }
+
+  # return render(request, 'salary/salaries.html', context)
 
 @login_required(login_url='login')
 def inputDateSalary_view(request):
@@ -793,6 +865,118 @@ def inputDateSalary_view(request):
   }
   return render(request, "salary/inputDate.html", context)
 
+def getSalaryOfEmployeeDetails(request, employee_id):
+  start = request.session.get("startDate")
+  end = request.session.get("endDate")
+
+  endPlus1 = datetime.strptime(end, "%Y-%m-%d")
+  endPlus1 = endPlus1 + timedelta(days=1)
+  completedProcesses = CompletedProcess.objects.filter(dateRecorded__range=[start, endPlus1])
+  employee           = Employee.objects.get(id=employee_id)
+  attendances        = Attendance.objects.filter(date__range=[start, endPlus1])
+  allowance          = Allowance.objects.filter(date__range=[start, endPlus1])
+  deduction          = Deduction.objects.filter(date__range=[start, endPlus1])
+  
+  salaryDetails = {}
+  totalPieceRatePayment = 0
+  completedProcesses = completedProcesses.filter(employeeID=employee_id).values('processID', 'quantity')
+  # print(completedProcesses)
+  # print(completedProcesses[0]['processID'], "\n\n\n")
+
+  #List content = [Order code, process name, quantity, price, price*quantity] 
+  completedProcessList = []
+
+  for completedProcess in completedProcesses:
+    qty = completedProcess['quantity']
+    currProcess = Process.objects.get(id=completedProcess['processID'])
+    # print("curr process: ",currProcess)
+    processName = getattr(currProcess, 'name')
+    # print("Proccess Name", processName)
+    price = getattr(currProcess, 'price')
+    currPieceRatePayment = (qty*price)
+    totalPieceRatePayment = totalPieceRatePayment + currPieceRatePayment
+    currOrderID = getattr(currProcess, 'orderID')
+    currOrderCode = Order.objects.get(id=getattr(currOrderID, 'id'))
+    orderCode = getattr(currOrderCode, 'code')
+
+    completedProcessList.append([orderCode, processName, qty, price, currPieceRatePayment])
+
+  # print(completedProcessList)
+
+  salaryDetails['pieceRateDetails'] = completedProcessList
+  # salaryDetails['totalPieceRatePayment'] = totalPieceRatePayment
+  
+
+  currAttendances = attendances.filter(employeeID=employee_id).values('percentage')
+  attendancePercentage = 0
+  for i in range(len(currAttendances)):
+    currPercentage = currAttendances[i]['percentage']
+    attendancePercentage = attendancePercentage + currPercentage
+  if attendancePercentage > 0:
+    attendancePercentage = attendancePercentage/100
+  
+  # salaryDetails['attendance'] = attendancePercentage
+
+  try: 
+    dailySalaryObj = DailySalary.objects.get(employeeID=employee_id)
+    salary = float(getattr(dailySalaryObj, 'dailySalary'))*attendancePercentage
+
+  except:
+    salary = 0
+  
+  # salaryDetails['salary'] = salary
+
+  currAllowances = allowance.filter(employeeID=employee_id).values('amount')
+  allowanceAmt = 0
+  for i in range(len(currAllowances)):
+    currAmt = currAllowances[i]['amount']
+    allowanceAmt = allowanceAmt + currAmt
+
+  # salaryDetails['allowance'] = allowanceAmt
+
+  
+
+  currDeductions = deduction.filter(employeeID=employee_id).values('amount')
+  deductionAmt = 0
+  for i in range(len(currDeductions)):
+    currAmt = currDeductions[i]['amount']
+    deductionAmt = deductionAmt + currAmt
+
+  # salaryDetails['deduction'] = deductionAmt
+
+  # print(salaryDetails, "\n\n")
+  # print('Allowance', allowance, "\n", 'Deduction', deductionAmt)
+  flag   = True
+  if not completedProcessList:
+    flag=False
+
+  total = float(totalPieceRatePayment) + salary + float(allowanceAmt) - float(deductionAmt)
+  # for salary in salaries:
+  #   total = total + salary.total
+
+  context = {
+    'flags':flag,
+    'employee': employee,
+    'startDate': start,
+    'endDate': end,
+    'attendance': attendancePercentage,
+    # 'salaryDetails':salaryDetails,
+    'totalPieceRatePayment': totalPieceRatePayment,
+    'salary': salary,
+    'allowance': allowanceAmt,
+    'deduction': deductionAmt,
+    'total': total,
+    'completedProcessList':completedProcessList
+    # 'data': salaryDetails
+  }
+
+  return context
+
+@login_required(login_url='login')
+def salary_of_employee_details_view(request, employee_id):
+  request.session['employee_id'] = employee_id
+  context = getSalaryOfEmployeeDetails(request, employee_id)
+  return render(request, 'salary/salary_of_employee_details.html', context)
 
 
 
@@ -1051,90 +1235,6 @@ def render_to_pdf(template_src, context_dict={}):
 		return HttpResponse(result.getvalue(), content_type='application/pdf')
 	return None
 
-
-data = {
-	"company": "Dennnis Ivanov Company",
-	"address": "123 Street name",
-	"city": "Vancouver",
-	"state": "WA",
-	"zipcode": "98663",
-
-
-	"phone": "555-555-2345",
-	"email": "youremail@dennisivy.com",
-	"website": "dennisivy.com",
-	}
-
-
-def getSalary(request):
-  start = request.session.get("startDate")
-  end = request.session.get("endDate")
-
-  endPlus1 = datetime.strptime(end, "%Y-%m-%d")
-  endPlus1 = endPlus1 + timedelta(days=1)
-  completedProcesses = CompletedProcess.objects.filter(dateRecorded__range=[start, endPlus1])
-  employees          = Employee.objects.all()
-  attendance         = Attendance.objects.filter(date__range=[start, endPlus1])
-  allowance          = Allowance.objects.filter(date__range=[start, endPlus1])
-  deduction          = Deduction.objects.filter(date__range=[start, endPlus1])
-  
-  salaries = []
-  i = 0
-  for employee in employees:
-    pieceRate = 0
-    currCompletedProcesses = completedProcesses.filter(employeeID=employee.id).values('processID', 'quantity')
-    for currCompletedProcess in currCompletedProcesses:
-      qty = currCompletedProcess['quantity']
-      processPrice = Process.objects.get(id=currCompletedProcess['processID'])
-      pieceRate = pieceRate + (qty*getattr(processPrice, 'price'))
-    
-    currAttendances = attendance.filter(employeeID=employee.id).values('percentage')
-    attendancePercentage = 0
-    for i in range(len(currAttendances)):
-      currPercentage = currAttendances[i]['percentage']
-      attendancePercentage = attendancePercentage + currPercentage
-    if attendancePercentage > 0:
-      attendancePercentage = attendancePercentage/100
-
-    try: 
-      dailySalaryObj = DailySalary.objects.get(employeeID=getattr(employee, 'id'))
-      salary = float(getattr(dailySalaryObj, 'dailySalary'))*attendancePercentage
-
-    except:
-      salary = 0
-    
-    currAllowances = allowance.filter(employeeID=employee.id).values('amount')
-    allowanceAmt = 0
-    for i in range(len(currAllowances)):
-      currAmt = currAllowances[i]['amount']
-      allowanceAmt = allowanceAmt + currAmt
-
-    currDeductions = deduction.filter(employeeID=employee.id).values('amount')
-    deductionAmt = 0
-    for i in range(len(currDeductions)):
-      currAmt = currDeductions[i]['amount']
-      deductionAmt = deductionAmt + currAmt
-
-    salaries.append(Salary(employee, salary, pieceRate, allowanceAmt, deductionAmt))
-    i = i+1
-
-  flag   = True
-  if not completedProcesses:
-    flag=False
-
-  total = 0
-  for salary in salaries:
-    total = total + salary.total
-
-  context = {
-    'salaries':salaries,
-    'flags':flag,
-    'startDate': start,
-    'endDate': end,
-    'total': total
-  }
-  return context
-
 #Opens up page as PDF
 # @login_required(login_url='login')
 class ViewSalaryPDF(View):
@@ -1154,6 +1254,29 @@ class DownloadSalaryPDF(View):
     
     response = HttpResponse(pdf, content_type='application/pdf')
     filename = "Salary_%s_to_%s.pdf" %(data["startDate"], data["endDate"])
+    content = "attachment; filename=%s" %(filename)
+    response['Content-Disposition'] = content
+    return response
+
+class ViewSalaryOfEmployeeDetailsPDF(View):
+  def get(self, request, *args, **kwargs):
+    employee_id = request.session.get("employee_id")
+    data = getSalaryOfEmployeeDetails(request, employee_id)
+
+    pdf = render_to_pdf('salary/salary_of_employee_details_pdf_template.html', data)
+    return HttpResponse(pdf, content_type='application/pdf')
+
+class DownloadSalaryOfEmployeeDetailsPDF(View):
+  def get(self, request, *args, **kwargs):
+    employee_id = request.session.get("employee_id")
+    data = getSalaryOfEmployeeDetails(request, employee_id)
+    pdf = render_to_pdf('salary/salary_of_employee_details_pdf_template.html', data)
+    
+    employee = data["employee"]
+    employeeName = str(employee).split("|")[1]
+
+    response = HttpResponse(pdf, content_type='application/pdf')
+    filename = "Salary_details_of_%s_%s_to_%s.pdf" %(employeeName, data["startDate"], data["endDate"])
     content = "attachment; filename=%s" %(filename)
     response['Content-Disposition'] = content
     return response
