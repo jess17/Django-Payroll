@@ -951,6 +951,7 @@ def attendance_employee_create_view(request, employee_id):
 
 
 #ALLOWANCE RELATED VIEWS
+@login_required(login_url='login')
 def allowance_view(request):
   allowances = Allowance.objects.all()
 
@@ -968,12 +969,15 @@ def allowance_view(request):
   }
   return render(request, 'salary/allowance/allowance.html', context)
 
+@login_required(login_url='login')
 def allowance_create_view(request):
   return create(request, AllowanceForm, redirect(allowance_view), 'salary/allowance/allowance_create.html')
 
+@login_required(login_url='login')
 def allowance_edit_view(request, allowance_id):
   return edit(request, allowance_id, AllowanceForm, Allowance, redirect(request.GET.get("next")), 'attendance/attendance_edit.html')
 
+@login_required(login_url='login')
 def allowance_delete_view(request):
   delete(request, Allowance)
   return  redirect(request.GET.get("next"))
@@ -989,6 +993,7 @@ def allowance_delete_view(request):
 
 
 #DEDUCTION RELATED VIEWS
+@login_required(login_url='login')
 def deduction_view(request):
   deductions = Deduction.objects.all()
 
@@ -1006,12 +1011,15 @@ def deduction_view(request):
   }
   return render(request, 'salary/deduction/deduction.html', context)
 
+@login_required(login_url='login')
 def deduction_create_view(request):
   return create(request, DeductionForm, redirect(deduction_view), 'salary/deduction/deduction_create.html')
 
+@login_required(login_url='login')
 def deduction_edit_view(request, deduction_id):
   return edit(request, deduction_id, DeductionForm, Deduction, redirect(request.GET.get("next")), 'salary/deduction/deduction_edit.html')
 
+@login_required(login_url='login')
 def deduction_delete_view(request):
   delete(request, Deduction)
   return  redirect(request.GET.get("next"))
@@ -1124,6 +1132,7 @@ def getSalary(request):
   return context
 
 #Opens up page as PDF
+# @login_required(login_url='login')
 class ViewSalaryPDF(View):
   def get(self, request, *args, **kwargs):
     data = getSalary(request)
@@ -1133,6 +1142,7 @@ class ViewSalaryPDF(View):
 
 
 #Automaticly downloads to PDF file
+# @login_required(login_url='login')
 class DownloadSalaryPDF(View):
   def get(self, request, *args, **kwargs):
     data = getSalary(request)
