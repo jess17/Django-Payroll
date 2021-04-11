@@ -53,10 +53,13 @@ urlpatterns = [
     path('dailySalary/edit/<dailySalary_id>/', views.dailySalary_edit_view, name="edit-dailySalary"),
     path('dailySalary/delete/', views.dailySalary_delete_view, name="delete-dailySalary"),
 
-    path('salary/date', views.inputDateSalary_view, name="inputDate-salary"),
+    path('salary/date/', views.inputDateSalary_view, name="inputDate-salary"),
     path('salary/', views.salary_view, name="salary"),
-    path('salary/pdf_view', views.ViewSalaryPDF.as_view(), name="view-salary-pdf"),
-    path('salary/pdf_download', views.DownloadSalaryPDF.as_view(), name="download-salary-pdf"),
+    path('salary/pdf_view/', views.ViewSalaryPDF.as_view(), name="view-salary-pdf"),
+    path('salary/pdf_download/', views.DownloadSalaryPDF.as_view(), name="download-salary-pdf"),
+    path('salary/details/<employee_id>/', views.salary_of_employee_details_view, name="salary-details-employee"),
+    path('salary/details/pdf/view', views.ViewSalaryOfEmployeeDetailsPDF.as_view(), name="view-salary-of-employee-details-pdf"),
+    path('salary/details/pdf/download/', views.DownloadSalaryOfEmployeeDetailsPDF.as_view(), name="download-salary-of-employee-details-pdf"),
     
     path('attendance/date', views.inputDateAttendance_view, name="inputDate-attendance"),
     path('attendance/', views.attendance_view, name="attendance"),

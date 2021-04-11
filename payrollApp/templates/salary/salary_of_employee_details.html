@@ -1,0 +1,90 @@
+{% extends 'real_base.html' %}
+
+{% load static %}
+{% load customtags %}
+{% load humanize %}
+
+{% block script %}
+<!-- <link rel="stylesheet" href="{% static 'css/tableStyle.css' %}"> -->
+{% endblock %}
+
+{% block page %}
+
+  <div class="card">
+    <div class="card-header bg-blue">
+      <!-- <button class='btn btn-secondary'>Back</button> -->
+      <h4 class="card-title text-center text-white">Salary of {{ employee.firstName|capfirst }} {% if employee.lastName %}{{ employee.lastName|capfirst }}{% endif %} from {{ startDate }} to {{ endDate }}</h4>
+    </div>
+    <div class="card-body">
+      <h5>Attendance: {{ attendance }} days</h5>
+      <table class="table table-bordered table-hover table-striped table-responsive-lg">
+        <thead>
+          <tr class="bg-gray">
+            <!-- <h3>Salary of {{ startDate }} to {{ endDate }}</h3> -->
+              {% if flags %}
+                <th>Order Code</th>
+                <th>Process Name</th>
+                <th>Quantity</th>
+                <th></th>
+                <th>Payment/unit</th>
+                <th>Total</th>
+              {% endif %}
+          </tr>
+      </thead>
+      {% if not flags %}
+      <tbody>
+        
+          <h5>No completed process in range {{ startDate }} to {{ endDate }}</h5>
+          {% else %}
+            {% for completedProcess  in completedProcessList %}
+              <tr>
+                <td>{{ completedProcess.0 }}</td> 
+                <td>{{ completedProcess.1 }}</td>
+                <td>{{ completedProcess.2|intcomma}}</td>
+                <td>X</td>
+                <td>{{ completedProcess.3|intcomma}}</td>
+                <td>{{ completedProcess.4|intcomma }}</td>
+              </tr>
+            {% endfor %}
+          
+      </tbody>
+      {% endif %}
+      </table>
+      <table align="right" style="font-size: 16pt;">
+        <tr>
+          <td>Total piece rate payment</td>
+          <td>: {{ totalPieceRatePayment|intcomma }}</td>
+        </tr>
+        <tr>
+          <td>Daily salary X {{ attendance }}</td>
+          <td>: {{ salary|intcomma }}</td>
+        </tr>
+        <tr>
+          <td>Allowance</td>
+          <td>: {{ allowance|intcomma }}</td>
+        </tr>
+        <tr>
+          <td>Deduction</td>
+          <td>: {% if deduction > 0 %}-{% endif %}{{ deduction|intcomma }}</td>
+        </tr>
+        <tr>
+          <td><b style="font-size:18pt; ">Total</b></td>
+          <td><b style="font-size:18pt; ">: {{ total|intcomma }}</b></td>
+        </tr>
+        <tr>
+          <td><a class="btn btn-info" href="{% url 'view-salary-of-employee-details-pdf' %}" target="_blank">View PDF</a>
+            <a class="btn btn-info"  href="{% url 'download-salary-of-employee-details-pdf' %}">Download PDF</a></td>
+        </tr>
+      </table>
+      <!-- <h4 style="text-align: right;">Total piece rate payment= {{ totalPieceRatePayment|intcomma }}</h4>
+      <h4 style="text-align: right;">Daily salary X {{ attendance }}= {{ salary|intcomma }}</h4>
+      <h4 style="text-align: right;">Allowance = {{ allowance|intcomma }}</h4>
+      <h4 style="text-align: right;">Deduction = {% if deduction > 0 %}-{% endif %}{{ deduction|intcomma }}</h4>
+      <h3 style="text-align: right;">Total = {{ total|intcomma }}</h3> -->
+      
+    </div>
+  </div>
+  
+{% endblock %}
+
+ 

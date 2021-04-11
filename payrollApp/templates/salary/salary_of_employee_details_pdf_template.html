@@ -1,0 +1,88 @@
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Salary of {{ employee.firstName|capfirst }} {% if employee.lastName %}{{ employee.lastName|capfirst }}{% endif %} from {{ startDate }} to {{ endDate }}</title>
+  <style>
+    @page {
+      size: a4 portrait;
+      margin: 1.5cm;
+      /* table { -pdf-keep-with-next: true; } */
+      /* @frame content_frame {           Content Frame 
+            left: 50pt; width: 512pt; top: 90pt; height: 632pt;
+      } */
+      /* @frame footer_frame {           
+        -pdf-frame-content: footer_content;
+        left: 50pt; width: 512pt; top: 772pt; height: 20pt;
+      } */
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="card-header bg-blue">
+      <!-- <button class='btn btn-secondary'>Back</button> -->
+      <h4 class="card-title text-center text-white" style="font-size: 18pt; text-align: center;">Salary of {{ employee.firstName|capfirst }} {% if employee.lastName %}{{ employee.lastName|capfirst }}{% endif %} from {{ startDate }} to {{ endDate }}</h4>
+    </div>
+    <div class="card-body">
+      <h5 style="font-size: 12pt">Attendance: {{ attendance }} days</h5>
+      {% if flags %}
+      <table class="table table-bordered table-hover table-striped table-responsive-lg" border="1" style="padding: 5px 5px 5px 5px;">
+        <thead>
+          <tr class="bg-gray" style="font-size: 13pt;"">
+                <th>Order Code</th>
+                <th>Process Name</th>
+                <th>Quantity</th>
+                <th>Payment/unit</th>
+                <th>Total</th>
+          </tr>
+      </thead>
+      
+      <tbody>
+        {% for completedProcess  in completedProcessList %}
+          <tr style="font-size: 12pt; text-align: center;">
+            <td>{{ completedProcess.0 }}</td> 
+            <td>{{ completedProcess.1 }}</td>
+            <td>{{ completedProcess.2|intcomma}}</td>
+            <td>{{ completedProcess.3|intcomma}}</td>
+            <td>{{ completedProcess.4|intcomma }}</td>
+          </tr>
+        {% endfor %}
+          
+      </tbody>
+      
+      </table>
+      {% else %}
+        <h5 style="font-size: 12pt">No completed process in range {{ startDate }} to {{ endDate }}</h5>      
+      {% endif %}
+      <br>
+      <table align="right" style="font-size: 12pt;">
+        <tr>
+          <td>Total piece rate payment</td>
+          <td>: {{ totalPieceRatePayment|intcomma }}</td>
+        </tr>
+        <tr>
+          <td>Daily salary X {{ attendance }}</td>
+          <td>: {{ salary|intcomma }}</td>
+        </tr>
+        <tr>
+          <td>Allowance</td>
+          <td>: {{ allowance|intcomma }}</td>
+        </tr>
+        <tr>
+          <td>Deduction</td>
+          <td>: {% if deduction > 0 %}-{% endif %}{{ deduction|intcomma }}</td>
+        </tr>
+        <tr>
+          <td><b style="font-size:14pt; ">Total</b></td>
+          <td><b style="font-size:14pt; ">: {{ total|intcomma }}</b></td>
+        </tr>
+      </table>
+      
+    </div>
+  </div>
+</body>
+</html>

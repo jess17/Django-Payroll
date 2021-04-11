@@ -32,11 +32,11 @@
       {% if not flags %}
       <tbody>
         
-          <h3>No Salary Record in this date ({{ startDate }} to {{ endDate }})</h3>
+          <h3>No Salary Record in this date ({{ startDate }} to {{ endDate }}</h3>
           {% else %}
             {% for salary  in salaries %}
               <tr>
-                <td>{{ salary.employeeID }}</td>
+                <td><a href="{% url 'salary-details-employee' salary.employeeID|escape|getID %}?next={{ request.path }}">{{ salary.employeeID }}</a></td>
                 <td>{{ salary.salary|intcomma }}</td> 
                 <td>{{ salary.pieceRate|intcomma }}</td>
                 <td>{{ salary.allowance|intcomma }}</td>
