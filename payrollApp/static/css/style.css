@@ -138,6 +138,32 @@ body {
   margin-right: 0.5rem;
 }
 
+.z{
+  z-index: -1;
+}
+
+.btn{
+  margin: 2px;
+}
+
+.searchBtn{
+  float:left;
+}
+
+.searchBtnCenter{
+  height: max-content;
+  margin: auto 0;
+}
+
+.searchForm{
+  visibility: hidden;
+  height:0;
+}
+
+.searchFormShow{
+  visibility: visible;
+  height:100%;
+}
 
 @media only screen and (max-width: 1000px) {
   .sidebar .list-group .list-group-item,
@@ -154,8 +180,13 @@ body {
   .collapse:not(.show) {
     display: block !important; 
     }
-
   
+}
+
+@media only screen and (max-width: 575px) {
+  .card{
+    margin-top:2.5rem;
+  }
 }
 
 

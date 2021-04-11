@@ -33,13 +33,21 @@
   
   
   <script>
-    $("#burger_container").click(function() {
-      $(".icon").toggleClass("close");
+    $(".navbar-toggler").click(function() {
+      $(".content").toggleClass("z");
     });
 
-    $("#burger_container").click(function() {
-      $(".burger").toggleClass("open");
+    $(".searchBtn").click(function() {
+      $(".searchForm").toggleClass("searchFormShow");
     });
+
+    // $("#burger_container").click(function() {
+    //   $(".icon").toggleClass("close");
+    // });
+
+    // $("#burger_container").click(function() {
+    //   $(".burger").toggleClass("open");
+    // });
 
     // function enableDeleteBtn(checkBox){
     //   //If the checkbox has been checked

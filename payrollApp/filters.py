@@ -87,6 +87,17 @@ class ProcessFilter(django_filters.FilterSet):
     fields =  '__all__'
     exclude = ['quantity', 'price']
 
+class ProcessOfOrderFilter(django_filters.FilterSet):
+  name = CharFilter(field_name="name", lookup_expr='icontains')
+  description = CharFilter(field_name="description", lookup_expr='icontains')
+  start_price = NumberFilter(field_name="price", lookup_expr='gte')
+  end_price = NumberFilter(field_name="price", lookup_expr='lte')
+
+  class Meta:
+    model = Process 
+    fields =  '__all__'
+    exclude = ['quantity', 'price', 'orderID']
+
 class AttendanceFilter(django_filters.FilterSet):
   start_date = DateFilter(field_name="date", lookup_expr='gte', widget=DateInput(), label="Date is greater than or equal to")
   end_date = DateFilter(field_name="date", lookup_expr='lte', widget=DateInput(), label='Date is less than or equal to')
