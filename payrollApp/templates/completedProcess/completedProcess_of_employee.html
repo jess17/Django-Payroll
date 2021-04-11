@@ -2,6 +2,7 @@
 
 {% load static %}
 {% load humanize %}
+{% load bootstrap4 %}
 
 {% block viewTitle %}Completed Process of {{ employee.firstName|capfirst }} {% if employee.lastName %}{{ employee.lastName|capfirst }}{% endif %}{% endblock %}
 
@@ -9,6 +10,12 @@
   <a href="{% url 'create-completedProcess-employee' employee.id %}?next={{ request.path }}" class="btn btn-info">Add Completed Process</a>
 {% endblock %}
 
+{% block searchForm %}
+  <form method="GET" class="searchForm">
+    {% bootstrap_form myFilter.form %}
+    <button class="btn btn-primary col-lg-12">Search</button>
+  </form>
+{% endblock %}
 
 {% block columns %}
   {% if flags %}

@@ -18,7 +18,7 @@
 {% block searchForm %}
   <form method="GET" class="searchForm">
     {% bootstrap_form myFilter.form %}
-    <button class="btn btn-primary">Search</button>
+    <button class="btn btn-primary col-lg-12">Search</button>
   </form>
 {% endblock %}
 
@@ -32,7 +32,7 @@
     <th>ID</th>
     <th>ID | Order Code</th>
     <th>Process Name</th>
-    <th>Piece rate</th>
+    <th>Payment/unit</th>
     <th>Quantity</th>
     <th>Description</th>
   {% endif %}

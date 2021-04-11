@@ -3,6 +3,7 @@
 {% load static %}
 {% load customtags %}
 {% load humanize %}
+{% load bootstrap4 %}
 
 {% block viewTitle %}Completed Process of Process {{ process.name|capfirst }} (Qty:{{ process.quantity }}){% endblock %}
 
@@ -11,6 +12,12 @@
 {% endblock %}
 
 
+{% block searchForm %}
+  <form method="GET" class="searchForm">
+    {% bootstrap_form myFilter.form %}
+    <button class="btn btn-primary col-lg-12">Search</button>
+  </form>
+{% endblock %}
 
 {% block columns %}
 <h3>Total Completed Process Qty: {{ completedQty }} out of {{ process.quantity }}</h3>
