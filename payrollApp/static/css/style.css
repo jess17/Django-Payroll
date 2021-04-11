@@ -150,6 +150,11 @@ body {
   float:left;
 }
 
+.searchBtnCenter{
+  height: max-content;
+  margin: auto 0;
+}
+
 .searchForm{
   visibility: hidden;
   height:0;

@@ -16,7 +16,7 @@ from django.forms import formset_factory
 
 from .models import Order, Process, Employee, EmploymentType, Position, CompletedProcess, DailySalary, Attendance, Allowance, Deduction
 from .forms import UserForm, OrderForm, ProcessForm, EmployeeForm, PositionForm, EmploymentTypeForm, CompletedProcessForm, DailySalaryForm, GetDateForm, AttendanceForm, ChooseEmployeeForm, AllowanceForm, DeductionForm
-from .filters import OrderFilter, AllowanceFilter, DeductionFilter, EmployeeFilter, CompletedProcessFilter, ProcessFilter, AttendanceFilter, AttendanceOfEmployeeFilter, CompletedProcessOfProcessFilter, CompletedProcessOfEmployeeFilter
+from .filters import OrderFilter, AllowanceFilter, DeductionFilter, EmployeeFilter, CompletedProcessFilter, ProcessFilter, AttendanceFilter, AttendanceOfEmployeeFilter, CompletedProcessOfProcessFilter, CompletedProcessOfEmployeeFilter, ProcessOfOrderFilter
 
 #IMPORT FOR PDF
 from io import BytesIO
@@ -192,10 +192,14 @@ def process_of_order_view(request, order_id):
   else:
     flag=False
   
+  myFilter = ProcessOfOrderFilter(request.GET, queryset=processes)
+  processes = myFilter.qs
+
   context = {
     'processes':processes,
     'flags':flag,
     'order':order,
+    'myFilter': myFilter
   }
   return render(request, "process/process_of_order.html", context)
 
