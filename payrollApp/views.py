@@ -253,27 +253,27 @@ def process_order_create_view(request, order_id):
 
 @login_required(login_url='login')
 def process_edit_view(request, process_id):
-  return edit(request, process_id, ProcessForm, Process, redirect(request.GET.get("next")), 'process/process_edit.html')
-  # form = ProcessForm(instance=Process.objects.get(id=process_id))
+  # Can't use edit function cuz we need to pass id=process_id when request.method =="POST", which is diff with the others
+  form = ProcessForm(instance=Process.objects.get(id=process_id))
   
-  # # print("Completed quantity: ", completedQty)
+  # print("Completed quantity: ", completedQty)
 
-  # # print(form['quantity'].value())
+  # print(form['quantity'].value())
   
 
-  # if request.method == "POST":
-  #   # print("Process ID (View): ", process_id)
-  #   form = ProcessForm(request.POST, request.FILES, instance=Process.objects.get(id=process_id), id=process_id)
+  if request.method == "POST":
+    # print("Process ID (View): ", process_id)
+    form = ProcessForm(request.POST, request.FILES, instance=Process.objects.get(id=process_id), id=process_id)
 
 
-  #   if form.is_valid():
-  #       form.save()
-  #       # return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-  #       return redirect(request.GET.get("next"))
+    if form.is_valid():
+        form.save()
+        # return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+        return redirect(request.GET.get("next"))
 
-  # return render(request, 'process/process_edit.html', {
-  #     "form": form,
-  # })
+  return render(request, 'process/process_edit.html', {
+      "form": form,
+  })
 
 @login_required(login_url='login')
 def process_delete_view(request):
