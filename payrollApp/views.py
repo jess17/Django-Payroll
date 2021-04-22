@@ -1163,7 +1163,7 @@ def allowance_create_view(request):
 
 @login_required(login_url='login')
 def allowance_edit_view(request, allowance_id):
-  return edit(request, allowance_id, AllowanceForm, Allowance, redirect(request.GET.get("next")), 'attendance/attendance_edit.html')
+  return edit(request, allowance_id, AllowanceForm, Allowance, redirect(request.GET.get("next")), 'salary/allowance/allowance_edit.html')
 
 @login_required(login_url='login')
 def allowance_delete_view(request):
