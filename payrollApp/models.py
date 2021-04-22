@@ -19,7 +19,7 @@ class Order(models.Model):
     return str(self.id)+" | "+self.code
 
 class Process(models.Model):
-  orderID     = models.ForeignKey('Order', default=None, null=True, on_delete=models.SET_DEFAULT)
+  orderID     = models.ForeignKey('Order', default=None, null=True, on_delete=models.CASCADE)
   name        = models.CharField(max_length=200)
   price       = models.DecimalField(decimal_places=2, max_digits=100, validators=[MinValueValidator(0, message="Price can't be less than 0")])
   quantity    = models.PositiveIntegerField()
@@ -68,8 +68,8 @@ class EmploymentType(models.Model):
     return self.name
 
 class CompletedProcess(models.Model):
-  processID     = models.ForeignKey('Process', default=None, null=True, on_delete=models.SET_DEFAULT)
-  employeeID    = models.ForeignKey('Employee', default=None, null=True, on_delete=models.SET_DEFAULT)
+  processID     = models.ForeignKey('Process', default=None, null=True, on_delete=models.CASCADE)
+  employeeID    = models.ForeignKey('Employee', default=None, null=True, on_delete=models.CASCADE)
   
   # from .forms import CompletedProcessForm
   # currentProcessID = CompletedProcessForm(request.POST).cleaned_data['processID']
@@ -120,7 +120,7 @@ class Attendance(models.Model):
   #   (ABSENT, "Absent"),
   # }
 
-  employeeID    = models.ForeignKey('Employee', default=None, null=True, on_delete=models.SET_DEFAULT)
+  employeeID    = models.ForeignKey('Employee', default=None, null=True, on_delete=models.CASCADE)
   date          = models.DateField()
   percentage    = models.IntegerField(default=100, validators=[MinValueValidator(0, message="Can't be less than 0"), MaxValueValidator(100, message="Can't be greater than 100")])
   # status        = models.IntegerField(choices= STATUS_CHOICES)
@@ -129,13 +129,13 @@ class Attendance(models.Model):
     unique_together = [['employeeID', 'date']]
 
 class Allowance(models.Model):
-  employeeID  = models.ForeignKey('Employee', default=None, null=True, on_delete=models.SET_DEFAULT)
+  employeeID  = models.ForeignKey('Employee', default=None, null=True, on_delete=models.CASCADE)
   amount      = models.DecimalField(decimal_places=2, max_digits=100, validators=[MinValueValidator(0.01, message="Amount must be greater than 0")])
   description = models.CharField(max_length=200, null=True, blank=True)
   date        = models.DateField()
 
 class Deduction(models.Model):
-  employeeID  = models.ForeignKey('Employee', default=None, null=True, on_delete=models.SET_DEFAULT)
+  employeeID  = models.ForeignKey('Employee', default=None, null=True, on_delete=models.CASCADE)
   amount      = models.DecimalField(decimal_places=2, max_digits=100, validators=[MinValueValidator(0.01, message="Amount must be greater than 0")])
   description = models.CharField(max_length=200, null=True, blank=True)
   date        = models.DateField()
