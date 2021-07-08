@@ -26,35 +26,6 @@ from django.views import View
 from xhtml2pdf import pisa
 
 # Create your views here.
-# def login_view(request):
-#   if request.user.is_authenticated:
-#     return redirect(home_view)
-#   else:
-#     form = UserForm()
-#     if request.method == 'POST':
-#       form = UserForm(request.POST)
-
-#       if form.is_valid():
-#         username = form.cleaned_data['username']
-#         password = form.cleaned_data['password']
-#         # username = form['username'].cleaned_data
-#         # password = form['password'].cleaned_data
-
-#         user = authenticate(request, username=username, password=password)
-
-#         if user is not None:
-#           login(request, user)
-#           return redirect(home_view)
-#         else:
-#           messages.info(request, 'Username or password is incorrect')
-
-#     context = {'form':form}
-#     return render(request, 'account/login.html', context)
-
-# def logout_view(request):
-# 	logout(request)
-# 	return redirect('account/login.html')
-
 @login_required(login_url='login')
 def home_view(request):
     return redirect(employee_view)
@@ -116,32 +87,9 @@ def order_view(request):
 def order_create_view(request):
     return create(request, OrderForm, redirect(order_view), 'order/order_create.html')
 
-  # form = OrderForm(request.POST or None)
-  # if form.is_valid():
-  #   form.save()
-  #   return redirect(order_view)
-
-  # context = {
-  #   'form':form
-  # }
-  # return render(request, "order/order_create.html", context)
-
 @login_required(login_url='login')
 def order_edit_view(request, order_id):
   return edit(request, order_id, OrderForm, Order, redirect(request.GET.get("next")), 'order/order_edit.html')
-    # form = OrderForm(instance=Order.objects.get(id=order_id))
-
-    # if request.method == "POST":
-    #     form = OrderForm(request.POST, request.FILES, instance=Order.objects.get(id=order_id))
-
-    #     if form.is_valid():
-    #       form.save()
-          
-    #       return redirect(request.GET.get("next"))
-
-    # return render(request, 'order/order_edit.html', {
-    #     "form": form
-    # })
 
 @login_required(login_url='login')
 def order_delete_view(request):
@@ -203,35 +151,10 @@ def process_of_order_view(request, order_id):
   }
   return render(request, "process/process_of_order.html", context)
 
-# def process_of_order_view(request, order_code):
-#   processes = Process.objects.filter(orderID=order_code)
-#   # processes = Process.objects.get(id=order_id)
-#   if processes:
-#     #There's at least one process
-#     flag=True
-#   else:
-#     flag=False
-
-#   context = {
-#     'processes':processes,
-#     'flags':flag,
-#     'orderID':order_id,
-#   }
-#   return render(request, "process/process_of_order.html", context)
 
 @login_required(login_url='login')
 def process_create_view(request):
   return create(request, ProcessForm, redirect(request.GET.get("next")), 'process/process_create.html')
-
-  # form = ProcessForm(request.POST or None)
-  # if form.is_valid():
-  #   form.save()
-  #   return redirect(request.GET.get("next"))
-
-  # context = {
-  #   'form':form
-  # }
-  # return render(request, "process/process_create.html", context)
 
 @login_required(login_url='login')
 def process_order_create_view(request, order_id):
@@ -253,22 +176,13 @@ def process_order_create_view(request, order_id):
 
 @login_required(login_url='login')
 def process_edit_view(request, process_id):
-  # Can't use edit function cuz we need to pass id=process_id when request.method =="POST", which is diff with the others
   form = ProcessForm(instance=Process.objects.get(id=process_id))
-  
-  # print("Completed quantity: ", completedQty)
-
-  # print(form['quantity'].value())
-  
 
   if request.method == "POST":
-    # print("Process ID (View): ", process_id)
     form = ProcessForm(request.POST, request.FILES, instance=Process.objects.get(id=process_id), id=process_id)
-
 
     if form.is_valid():
         form.save()
-        # return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
         return redirect(request.GET.get("next"))
 
   return render(request, 'process/process_edit.html', {
@@ -307,8 +221,6 @@ def employee_view(request):
 @login_required(login_url='login')
 def employee_create_view(request):
   form = EmployeeForm(request.POST or None)
-  # positions = Position.objects.all()
-  # employmentTypes = EmploymentType.objects.all()
 
   if form.is_valid():
     form.save()
@@ -316,26 +228,12 @@ def employee_create_view(request):
 
   context = {
     'form':form,
-    # 'positions': positions,
-    # 'employmentTypes': employmentTypes
   }
   return render(request, "employee/employee_create.html", context)
 
 @login_required(login_url='login')
 def employee_edit_view(request, employee_id):
   return edit(request, employee_id, EmployeeForm, Employee, redirect(request.GET.get("next")), 'employee/employee_edit.html')
-  # form = EmployeeForm(instance=Employee.objects.get(id=employee_id))
-
-  # if request.method == "POST":
-  #     form = EmployeeForm(request.POST, request.FILES, instance=Employee.objects.get(id=employee_id))
-
-  #     if form.is_valid():
-  #         form.save()
-  #         return redirect(request.GET.get("next"))
-
-  # return render(request, 'employee/employee_edit.html', {
-  #     "form": form
-  # })
 
 @login_required(login_url='login')
 def employee_delete_view(request):
@@ -370,32 +268,9 @@ def position_view(request):
 def position_create_view(request):
   return create(request, PositionForm, redirect(request.GET.get("next")), 'employee/position/position_create.html')
 
-  # form = PositionForm(request.POST or None)
-  # if form.is_valid():
-  #   form.save()
-  #   return redirect(request.GET.get("next"))
-
-  # context = {
-  #   'form':form
-  # }
-  # return render(request, "employee/position/position_create.html", context)
-
 @login_required(login_url='login')
 def position_edit_view(request, position_id):
   return edit(request, position_id, PositionForm, Position, redirect(request.GET.get("next")), 'employee/position/position_edit.html')
-
-    # form = PositionForm(instance=Position.objects.get(id=position_id))
-
-    # if request.method == "POST":
-    #     form = PositionForm(request.POST, request.FILES, instance=Position.objects.get(id=position_id))
-
-    #     if form.is_valid():
-    #         form.save()
-    #         return redirect(request.GET.get("next"))
-
-    # return render(request, 'employee/position/position_edit.html', {
-    #     "form": form
-    # })
 
 @login_required(login_url='login')
 def position_delete_view(request):
@@ -429,15 +304,6 @@ def employmentType_view(request):
 @login_required(login_url='login')
 def employmentType_create_view(request):
   return create(request, EmploymentTypeForm, redirect(request.GET.get("next")), 'employee/employmentType/employmentType_create.html')
-  # form = EmploymentTypeForm(request.POST or None)
-  # if form.is_valid():
-  #   form.save()
-  #   return redirect(request.GET.get("next"))
-
-  # context = {
-  #   'form':form
-  # }
-  # return render(request, "employee/employmentType/employmentType_create.html", context)
 
 @login_required(login_url='login')
 def employmentType_edit_view(request, employmentType_id):
@@ -471,7 +337,6 @@ def completedProcess_view(request):
   processes = Process.objects.exists()
   processFlag=True
   if not processes:
-    #Orders is empty
     processFlag=False
 
   myFilter = CompletedProcessFilter(request.GET, queryset=completedProcesses)
@@ -539,15 +404,6 @@ def completedProcess_of_employee_view(request, employee_id):
 @login_required(login_url='login')
 def completedProcess_create_view(request):
   return create(request, CompletedProcessForm, redirect(request.GET.get("next")), 'completedProcess/completedProcess_create.html')
-  # form = CompletedProcessForm(request.POST or None)
-  # if form.is_valid():
-  #   form.save()
-  #   return redirect(request.GET.get("next"))
-
-  # context = {
-  #   'form':form
-  # }
-  # return render(request, "completedProcess/completedProcess_create.html", context)
 
 @login_required(login_url='login')
 def completedProcess_process_create_view(request, process_id):
@@ -555,7 +411,6 @@ def completedProcess_process_create_view(request, process_id):
   form.fields['processID'].initial = process_id
   form.fields['processID'].disabled = True
   process = Process.objects.get(id=process_id)
-  # form.fields['quantity'].initial = process.quantity
 
 
   if form.is_valid():
@@ -573,10 +428,7 @@ def completedProcess_employee_create_view(request, employee_id):
   form = CompletedProcessForm(request.POST or None)
   form.fields['employeeID'].initial = employee_id
   form.fields['employeeID'].disabled = True
-  # employee = Employee.objects.get(id=employee_id)
-  # form.fields['quantity'].initial = process.quantity
-
-
+ 
   if form.is_valid():
     form.save()
     return redirect(request.GET.get("next"))
@@ -589,22 +441,6 @@ def completedProcess_employee_create_view(request, employee_id):
 @login_required(login_url='login')
 def completedProcess_edit_view(request, completedProcess_id):
   return edit(request, completedProcess_id, CompletedProcessForm, CompletedProcess, redirect(request.GET.get("next")), 'completedProcess/completedProcess_edit.html')
-
-  # form = CompletedProcessForm(instance=CompletedProcess.objects.get(id=completedProcess_id))
-
-  # if request.method == "POST":
-  #     form = CompletedProcessForm(request.POST, request.FILES, instance=CompletedProcess.objects.get(id=completedProcess_id))
-      
-  #     # errMsg = "Quantity can't be greater than " + str(maxVal)
-  #     # raise ValidationError(errMsg)
-  #     if form.is_valid():
-  #         form.save()
-  #         # return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-  #         return redirect(request.GET.get("next"))
-
-  # return render(request, 'completedProcess/completedProcess_edit.html', {
-  #     "form": form
-  # })
 
 @login_required(login_url='login')
 def completedProcess_delete_view(request):
@@ -639,18 +475,6 @@ def dailySalary_view(request):
 @login_required(login_url='login')
 def dailySalary_create_view(request):
   return create(request, DailySalaryForm, redirect(dailySalary_view), 'salary/dailySalary_create.html')
-  # form = DailySalaryForm(request.POST or None)
-  # # employees = Employee.objects.all()
-
-  # if form.is_valid():
-  #   form.save()
-  #   return redirect(dailySalary_view)
-
-  # context = {
-  #   'form':form,
-  #   # 'employees': employees,
-  # }
-  # return render(request, "salary/dailySalary_create.html", context)
 
 @login_required(login_url='login')
 def dailySalary_edit_view(request, dailySalary_id):
@@ -762,98 +586,12 @@ def salary_view(request):
   context = getSalary(request)
   return render(request, 'salary/salaries.html', context)
 
-  # start = request.session.get("startDate")
-  # end = request.session.get("endDate")
-  # # print(start)
-  # # print(end)
-
-  # # endPlus1 is needed cuz date__range is inclusive
-  # endPlus1 = datetime.strptime(end, "%Y-%m-%d")
-  # endPlus1 = endPlus1 + timedelta(days=1)
-  # completedProcesses = CompletedProcess.objects.filter(dateRecorded__range=[start, endPlus1])
-  # employees          = Employee.objects.all()
-  # attendance         = Attendance.objects.filter(date__range=[start, endPlus1])
-  # allowance          = Allowance.objects.filter(date__range=[start, endPlus1])
-  # deduction          = Deduction.objects.filter(date__range=[start, endPlus1])
-  
-  # salaries = []
-  # i = 0
-  # for employee in employees:
-  #   # print("Employee", employee)
-  #   pieceRate = 0
-  #   currCompletedProcesses = completedProcesses.filter(employeeID=employee.id).values('processID', 'quantity')
-  #   # print(currCompletedProcesses)
-  #   for currCompletedProcess in currCompletedProcesses:
-  #     # print(currCompletedProcess)
-  #     qty = currCompletedProcess['quantity']
-  #     processPrice = Process.objects.get(id=currCompletedProcess['processID'])
-  #     # print("Price", processPrice)
-  #     pieceRate = pieceRate + (qty*getattr(processPrice, 'price'))
-  #     # print("Piece rate Payment: ", pieceRate)
-    
-  #   currAttendances = attendance.filter(employeeID=employee.id).values('percentage')
-  #   attendancePercentage = 0
-  #   for i in range(len(currAttendances)):
-  #     currPercentage = currAttendances[i]['percentage']
-  #     attendancePercentage = attendancePercentage + currPercentage
-  #   if attendancePercentage > 0:
-  #     attendancePercentage = attendancePercentage/100
-
-  #   # print(employee, attendancePercentage)
-  #   try: 
-  #     dailySalaryObj = DailySalary.objects.get(employeeID=getattr(employee, 'id'))
-  #     salary = float(getattr(dailySalaryObj, 'dailySalary'))*attendancePercentage
-  #     # print("Salary: ", salary)
-  #   except:
-  #     salary = 0
-    
-  #   currAllowances = allowance.filter(employeeID=employee.id).values('amount')
-  #   allowanceAmt = 0
-  #   for i in range(len(currAllowances)):
-  #     currAmt = currAllowances[i]['amount']
-  #     allowanceAmt = allowanceAmt + currAmt
-
-  #   currDeductions = deduction.filter(employeeID=employee.id).values('amount')
-  #   deductionAmt = 0
-  #   for i in range(len(currDeductions)):
-  #     currAmt = currDeductions[i]['amount']
-  #     deductionAmt = deductionAmt + currAmt
-
-  #   salaries.append(Salary(employee, salary, pieceRate, allowanceAmt, deductionAmt))
-  #   i = i+1
-
-  # # print(salaries)
-  # flag   = True
-  # if not completedProcesses:
-  #   flag=False
-
-  # total = 0
-  # for salary in salaries:
-  #   total = total + salary.total
-
-  # # Del the session creates an error when the page is refreshed
-  # # del request.session['startDate']
-  # # del request.session['endDate']
-
-  # context = {
-  #   'salaries':salaries,
-  #   'flags':flag,
-  #   'startDate': start,
-  #   'endDate': end,
-  #   'total': total
-  # }
-
-  # return render(request, 'salary/salaries.html', context)
-
 @login_required(login_url='login')
 def inputDateSalary_view(request):
   endDate = date.today()
   startDate = endDate - timedelta(days=5)
   form = GetDateForm(request.POST or None, initial={'endDate': endDate, 'startDate':startDate})
 
-  # print(form)
-  # print("Error: ", form.errors)
-  # print("Non field err: ", form.non_field_errors)
   if form.is_valid():
     request.session['startDate'] = form['startDate'].value()
     request.session['endDate'] = form['endDate'].value()
@@ -880,18 +618,12 @@ def getSalaryOfEmployeeDetails(request, employee_id):
   salaryDetails = {}
   totalPieceRatePayment = 0
   completedProcesses = completedProcesses.filter(employeeID=employee_id).values('processID', 'quantity')
-  # print(completedProcesses)
-  # print(completedProcesses[0]['processID'], "\n\n\n")
-
-  #List content = [Order code, process name, quantity, price, price*quantity] 
   completedProcessList = []
 
   for completedProcess in completedProcesses:
     qty = completedProcess['quantity']
     currProcess = Process.objects.get(id=completedProcess['processID'])
-    # print("curr process: ",currProcess)
     processName = getattr(currProcess, 'name')
-    # print("Proccess Name", processName)
     price = getattr(currProcess, 'price')
     currPieceRatePayment = (qty*price)
     totalPieceRatePayment = totalPieceRatePayment + currPieceRatePayment
@@ -901,12 +633,8 @@ def getSalaryOfEmployeeDetails(request, employee_id):
 
     completedProcessList.append([orderCode, processName, qty, price, currPieceRatePayment])
 
-  # print(completedProcessList)
-
   salaryDetails['pieceRateDetails'] = completedProcessList
-  # salaryDetails['totalPieceRatePayment'] = totalPieceRatePayment
   
-
   currAttendances = attendances.filter(employeeID=employee_id).values('percentage')
   attendancePercentage = 0
   for i in range(len(currAttendances)):
@@ -915,7 +643,6 @@ def getSalaryOfEmployeeDetails(request, employee_id):
   if attendancePercentage > 0:
     attendancePercentage = attendancePercentage/100
   
-  # salaryDetails['attendance'] = attendancePercentage
 
   try: 
     dailySalaryObj = DailySalary.objects.get(employeeID=employee_id)
@@ -924,15 +651,12 @@ def getSalaryOfEmployeeDetails(request, employee_id):
   except:
     salary = 0
   
-  # salaryDetails['salary'] = salary
 
   currAllowances = allowance.filter(employeeID=employee_id).values('amount')
   allowanceAmt = 0
   for i in range(len(currAllowances)):
     currAmt = currAllowances[i]['amount']
     allowanceAmt = allowanceAmt + currAmt
-
-  # salaryDetails['allowance'] = allowanceAmt
 
   
 
@@ -942,17 +666,11 @@ def getSalaryOfEmployeeDetails(request, employee_id):
     currAmt = currDeductions[i]['amount']
     deductionAmt = deductionAmt + currAmt
 
-  # salaryDetails['deduction'] = deductionAmt
-
-  # print(salaryDetails, "\n\n")
-  # print('Allowance', allowance, "\n", 'Deduction', deductionAmt)
   flag   = True
   if not completedProcessList:
     flag=False
 
   total = float(totalPieceRatePayment) + salary + float(allowanceAmt) - float(deductionAmt)
-  # for salary in salaries:
-  #   total = total + salary.total
 
   context = {
     'flags':flag,
@@ -960,14 +678,12 @@ def getSalaryOfEmployeeDetails(request, employee_id):
     'startDate': start,
     'endDate': end,
     'attendance': attendancePercentage,
-    # 'salaryDetails':salaryDetails,
     'totalPieceRatePayment': totalPieceRatePayment,
     'salary': salary,
     'allowance': allowanceAmt,
     'deduction': deductionAmt,
     'total': total,
     'completedProcessList':completedProcessList
-    # 'data': salaryDetails
   }
 
   return context
@@ -1023,7 +739,6 @@ def attendance_create_view(request):
   end = datetime.strptime(end, "%Y-%m-%d")
   
   delta = end-start
-  # print("How many days?", delta.days)
   dateList = []
   days = delta.days+1
   for i in range(delta.days+1):
@@ -1032,15 +747,11 @@ def attendance_create_view(request):
 
 
   AttendanceFormSet = inlineformset_factory(Employee, Attendance, form=AttendanceForm, fields=("date", "percentage"), extra=days)
-  # AttendanceFormSet = formset_factory(AttendanceForm, extra=delta.days+1, initial=[{'date':x} for x in dateList])
 
   employee = Employee.objects.get(id=employee_id)
   formset = AttendanceFormSet(queryset=Attendance.objects.none(), instance=employee, initial=[{'date':x} for x in dateList])
-  # form = AttendanceForm(initial={'employeeID':employee})
-  # employees = Employee.objects.all()
 
   if request.method == 'POST':
-    # form = AttendanceForm(request.POST)
     formset = AttendanceFormSet(request.POST, instance=employee, initial=[{'date':x} for x in dateList])
     if formset.is_valid():
       formset.save()
@@ -1068,9 +779,6 @@ def inputDateAttendance_view(request):
   startDate = endDate - timedelta(days=5)
   form2 = GetDateForm(request.POST or None, initial={'endDate': endDate, 'startDate':startDate})
 
-  # print(form)
-  # print("Error: ", form.errors)
-  # print("Non field err: ", form.non_field_errors)
   if form1.is_valid() and form2.is_valid():
     request.session['employee'] = form1['employeeID'].value()
     request.session['startDate'] = form2['startDate'].value()
@@ -1236,7 +944,6 @@ def render_to_pdf(template_src, context_dict={}):
 	return None
 
 #Opens up page as PDF
-# @login_required(login_url='login')
 class ViewSalaryPDF(View):
   def get(self, request, *args, **kwargs):
     data = getSalary(request)
@@ -1245,8 +952,7 @@ class ViewSalaryPDF(View):
     return HttpResponse(pdf, content_type='application/pdf')
 
 
-#Automaticly downloads to PDF file
-# @login_required(login_url='login')
+#Automatically downloads to PDF file
 class DownloadSalaryPDF(View):
   def get(self, request, *args, **kwargs):
     data = getSalary(request)

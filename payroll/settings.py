@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'admin_auto_filters',
     'django.contrib.humanize',
     'django_filters',
+#   'django_extensions',
 ]
 
 MIDDLEWARE = [
@@ -134,3 +135,8 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 import dj_database_url
 db_from_env = dj_database_url.config()
 DATABASES['default'].update(db_from_env)
+
+#GRAPH_MODELS = {
+#  'all_applications': True,
+#  'group_models': True,
+#}

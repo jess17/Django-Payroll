@@ -23,10 +23,8 @@
       <form action="{% url 'delete-completedProcess'%}?next={{ request.path }}" method="POST">{% csrf_token %}
     {% endblock %}
     <th></th>
-
     <th>ID</th>
     <th>ID | Process Name</th>
-    <!-- <th>ID | Employee Name</th> -->
     <th>Quantity</th>
     <th>Date Recorded</th>
   {% endif %}           
@@ -42,7 +40,6 @@
 
           <td scope="row"><a href="{% url 'edit-completedProcess' completedProcess.id %}?next={{ request.path }}">{{ completedProcess.id }}</a></td>
           <td>{{ completedProcess.processID }}</td>
-          <!-- <td>{{ completedProcess.employeeID }}</td> -->
           <td>{{ completedProcess.quantity|intcomma }}</td>
           <td>{{ completedProcess.dateRecorded  }}</td>
           

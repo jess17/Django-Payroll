@@ -15,15 +15,6 @@ $(document).ready(function() {
 });
 </script>
 
-
-<!-- <script src="{% static 'js/jquery.min.js' %}"></script> -->
-<!-- <script src="{% static 'js/jquery.formset.js' %}"></script>
-<script>
-    $('.formset').formset({
-        addText: 'Add',
-        deleteText: 'Remove'
-    });
-</script> -->
 {% endblock %}
 
 {% block page %}
@@ -46,9 +37,7 @@ $(document).ready(function() {
 
                 {% bootstrap_form form %}
               </div>
-              
 
-            <!-- {{ form }} -->
             <hr>
           {% endfor %}
           <button type="submit" class="btn btn-success col-lg-12" style="/*margin: 0px 30vw;*/">Add Attendance Record</button>

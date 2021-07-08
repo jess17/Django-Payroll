@@ -52,7 +52,6 @@ $(document).ready(function() {
 
           <td scope="row"><a href="{% url 'edit-attendance' attendance.id %}?next={{ request.path }}">{{ attendance.id }}</a></td>
           <td>{{ attendance.date }}</td>
-          <!-- <td>{{ attendance.employeeID }}</td> -->
           <td>{{ attendance.percentage }}%</td>
           <td>
             {% if attendance.percentage == 100 %}

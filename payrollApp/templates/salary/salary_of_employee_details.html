@@ -5,14 +5,12 @@
 {% load humanize %}
 
 {% block script %}
-<!-- <link rel="stylesheet" href="{% static 'css/tableStyle.css' %}"> -->
 {% endblock %}
 
 {% block page %}
 
   <div class="card">
     <div class="card-header bg-blue">
-      <!-- <button class='btn btn-secondary'>Back</button> -->
       <h4 class="card-title text-center text-white">Salary of {{ employee.firstName|capfirst }} {% if employee.lastName %}{{ employee.lastName|capfirst }}{% endif %} from {{ startDate }} to {{ endDate }}</h4>
     </div>
     <div class="card-body">
@@ -20,7 +18,6 @@
       <table class="table table-bordered table-hover table-striped table-responsive-lg">
         <thead>
           <tr class="bg-gray">
-            <!-- <h3>Salary of {{ startDate }} to {{ endDate }}</h3> -->
               {% if flags %}
                 <th>Order Code</th>
                 <th>Process Name</th>
@@ -76,12 +73,6 @@
             <a class="btn btn-info"  href="{% url 'download-salary-of-employee-details-pdf' %}">Download PDF</a></td>
         </tr>
       </table>
-      <!-- <h4 style="text-align: right;">Total piece rate payment= {{ totalPieceRatePayment|intcomma }}</h4>
-      <h4 style="text-align: right;">Daily salary X {{ attendance }}= {{ salary|intcomma }}</h4>
-      <h4 style="text-align: right;">Allowance = {{ allowance|intcomma }}</h4>
-      <h4 style="text-align: right;">Deduction = {% if deduction > 0 %}-{% endif %}{{ deduction|intcomma }}</h4>
-      <h3 style="text-align: right;">Total = {{ total|intcomma }}</h3> -->
-      
     </div>
   </div>
   

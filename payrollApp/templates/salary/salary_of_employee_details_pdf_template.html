@@ -10,21 +10,12 @@
     @page {
       size: a4 portrait;
       margin: 1.5cm;
-      /* table { -pdf-keep-with-next: true; } */
-      /* @frame content_frame {           Content Frame 
-            left: 50pt; width: 512pt; top: 90pt; height: 632pt;
-      } */
-      /* @frame footer_frame {           
-        -pdf-frame-content: footer_content;
-        left: 50pt; width: 512pt; top: 772pt; height: 20pt;
-      } */
     }
   </style>
 </head>
 <body>
   <div class="card">
     <div class="card-header bg-blue">
-      <!-- <button class='btn btn-secondary'>Back</button> -->
       <h4 class="card-title text-center text-white" style="font-size: 18pt; text-align: center;">Salary of {{ employee.firstName|capfirst }} {% if employee.lastName %}{{ employee.lastName|capfirst }}{% endif %} from {{ startDate }} to {{ endDate }}</h4>
     </div>
     <div class="card-body">
